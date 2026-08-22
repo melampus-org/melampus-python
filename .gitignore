@@ -52,5 +52,10 @@ ENV/
 .idea/
 *.swp
 
+# AI coding assistants — local/user-specific config, not shared
+.claude/settings.local.json
+.cursor/settings.local.json
+.mcp.local.json
+
 # macOS
 .DS_Store
