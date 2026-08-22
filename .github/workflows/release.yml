@@ -1,0 +1,58 @@
+name: Release
+
+# Merge-side release: on push to main, if VERSION has no matching v* tag yet,
+# create the annotated tag and publish a GitHub Release with auto-assembled notes.
+#
+# Hardening: every action is pinned to an immutable commit SHA (tag in a trailing
+# comment), not a movable @vN tag.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "VERSION"
+      - "CHANGELOG.md"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up cached CI tools
+        uses: ./.github/actions/setup-ci-tools
+
+      - name: Tag & release when VERSION has no tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          ver="$(tr -d '[:space:]' < VERSION)"
+          [ -n "$ver" ] || { echo "::error::VERSION is empty"; exit 1; }
+          tag="v$ver"
+
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "$tag already exists — nothing to release."
+            exit 0
+          fi
+
+          prev="$(git tag --list 'v*' | sort -V | tail -1)"
+          echo "Releasing $tag (previous: ${prev:-none})"
+          if [ -n "$prev" ]; then
+            python3 release/_lib/release_notes.py "$ver" --prev-tag "$prev" > notes.md
+          else
+            python3 release/_lib/release_notes.py "$ver" > notes.md
+          fi
+
+          git tag -a "$tag" -m "v$ver"
+          git push origin "$tag"
+          gh release create "$tag" --title "v$ver" --notes-file notes.md
+          echo "::notice::Released $tag"
