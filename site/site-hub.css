@@ -1,0 +1,125 @@
+/* Hub layout for site/index.html — pairs with brand.css (OPSWAT tokens). */
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: rgba(248, 249, 249, 0.92);
+}
+
+.site-header__inner,
+.hero__inner,
+.guide,
+.site-footer__inner {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.site-mark {
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--action);
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.site-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.site-kicker {
+  font-size: 0.8125rem;
+  color: var(--mid);
+}
+
+.hero {
+  border-bottom: 1px solid var(--line);
+}
+
+.hero__inner {
+  padding-top: 3rem;
+  padding-bottom: 2.5rem;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.hero__lede {
+  margin: 1rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(12, 18, 29, 0.8);
+}
+
+.guide {
+  padding-top: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+.guide h2 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.guide h2:first-child {
+  margin-top: 0;
+}
+
+.guide p,
+.guide li {
+  color: rgba(12, 18, 29, 0.82);
+  font-size: 0.95rem;
+}
+
+.guide ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.guide li {
+  margin-bottom: 0.35rem;
+}
+
+.guide a {
+  color: var(--action);
+  text-decoration: none;
+}
+
+.guide a:hover {
+  text-decoration: underline;
+}
+
+.guide code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: rgba(12, 18, 29, 0.06);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.5rem 0 2.5rem;
+}
+
+.site-footer__inner {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mid);
+}
