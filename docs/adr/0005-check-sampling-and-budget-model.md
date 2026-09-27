@@ -22,7 +22,7 @@ Cost control has two layers plus an override:
 1. **Per-check sample rate** (`sample=0.01` on the check declaration): a
    deterministic head decision at the call site — cheap, local, no
    coordination. MVP ships this.
-2. **Per-service check budget**: a process-wide token bucket (checks/second,
+2. **Per-process check execution budget**: a process-wide fixed-window execution limit (checks/second,
    configured via env/config per service). A check only runs if it passes its
    sample rate *and* acquires budget. MVP ships a minimal fixed-rate version;
    full token-bucket accounting is post-MVP.
@@ -35,12 +35,11 @@ suppression itself is observable.
 
 ## Consequences
 
-- Worst-case check cost per service is bounded and configurable — the
+- Check execution count per process is bounded and configurable — the
   platform persona gets a single number to reason about, independent of how
   many decorated functions ship in a release.
 - The watcher's declaration-based rules keep working at any sampling level;
-  what sampling changes is *detection latency* (fewer executed checks →
-  longer time-to-first-violating-sample), which is a visible, tunable
+  sampling can miss a rare failure entirely; when failures recur it also changes detection latency, which is a visible, tunable
   trade-off rather than a silent gap.
 - Suppression markers make the dial auditable: "how often are checks actually
   running in prod" is a standard attribute query, and a service quietly

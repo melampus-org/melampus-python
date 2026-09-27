@@ -30,7 +30,7 @@ emitted at all. No prose ever appears in a span attribute.
 ## Consequences
 
 - The queryable core stays cheap and safe: backends can index and alert on
-  every attribute without cardinality or PII risk, and the hash still allows
+  every attribute with bounded values (hashes and identifiers still carry cardinality and disclosure risk), and the hash still allows
   exact-match joins back to source artifacts.
 - Standard collector processors (`filter`, `transform`) can drop or redact the
   content events without touching the attributes — privacy controls compose
