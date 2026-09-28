@@ -28,16 +28,21 @@ Trusted Publishing workflow audit all pass locally.
 Local integration passed both healthy (zero findings, exit 0) and drift (one finding,
 exit 1) with the real OTel Python HTTP exporter, directly and through the official
 Collector Contrib 0.161.0 native binary. The binary SHA-256 was verified against
-its upstream release checksum. Docker was not running locally; CI exercises Compose.
+its upstream release checksum. Docker was not running locally; the GitHub CI collector job passed the Compose demo.
+All eight checks passed on the implementation commit, including Linux Python
+3.11–3.14, macOS Python 3.11/3.14, the version guard, and the collector integration.
 
 **Performance limitation:** an initial macOS ARM64 / Python 3.11 recording-span
 benchmark measured 4.74 μs for a bare OTel span and 8.02 μs for an instrumented
 call with no checks (~3.28 μs / 69% extra). This is a local microbenchmark, not a
 production SLA. The founding spec's <3% target remains **unmet**. The benchmark
 reports it explicitly; CI does not hide the failure behind a noisy timing gate.
-A maintainer must resolve this target or explicitly accept the documented alpha
-limitation before merging the version bump. No claim of satisfying that target
-should appear in release announcements.
+The alpha accepts this documented declaration cost under
+[ADR-0007](adr/0007-alpha-performance-baseline.md), which revises the SDK-overhead
+comparison to equivalent manual OTel work while retaining the total-cost metric.
+The equivalent-work experiment measured 8.09 μs manually versus 8.05 μs with
+Melampus (indistinguishable within noise). No claim of satisfying the original
+bare-span target should appear in release announcements.
 
 The first release review must confirm the name `melampus` and its PyPI ownership.
 Both `melampus` and `melampus-python` returned 404 from PyPI during preparation;

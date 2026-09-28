@@ -112,7 +112,9 @@ Sampling can miss rare failures. OTel sampling and attribute limits also affect 
 ## Status and development
 
 The original **<3% checks-off overhead target is not yet met** against a bare
-recording OTel span. See [release evidence and limitations](https://github.com/melampus-org/melampus-python/blob/main/docs/RELEASE.md).
+recording OTel span. The alpha distinguishes wrapper overhead from the cost of
+carrying declarations, using an equivalent manual span as the wrapper baseline.
+See [release evidence and limitations](https://github.com/melampus-org/melampus-python/blob/main/docs/RELEASE.md).
 There is no claim that this alpha is ready for unrestricted production exposure.
 
 ```sh

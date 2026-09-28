@@ -125,8 +125,11 @@ protocol, no custom backend, no phone-home.
 - **Watcher precision on seeded drift:** in the demo, 100% of seeded drifts
   detected with zero findings on healthy traffic; pilot target precision
   ≥ 0.95 on a seeded-drift corpus.
-- **Overhead:** an instrumented call with checks off adds < 3% latency versus
-  a plain OTel span (microbenchmark kept in CI).
+- **Alpha SDK overhead:** with checks off, target < 3% versus a manual OTel span
+  carrying the same declarations and privacy settings. Report total cost versus
+  a bare span separately; the original < 3% bare-span ambition remains unmet.
+  See [ADR-0007](adr/0007-alpha-performance-baseline.md) for the explicit revision
+  and evidence; the microbenchmark is kept in CI.
 
 ## Verification
 
