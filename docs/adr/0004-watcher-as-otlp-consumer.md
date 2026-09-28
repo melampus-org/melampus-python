@@ -33,9 +33,9 @@ processors, no required collector at all.
   is config, not a rebuild, and works identically with vendor collector
   distributions users cannot recompile.
 - The watcher stays out of the telemetry hot path. A slow rule — or, later, a
-  slow LLM enrichment call — delays a finding, never a span reaching the
-  user's real backend. This isolation is what makes the LLM path safely
-  optional and air-gap-degradable.
+  slow LLM enrichment call — can delay a finding. Independent exporter queues reduce interference with
+  the real backend, but finite queues and collector backpressure mean absolute
+  isolation is not guaranteed. The demo uses short batches and bounded retries.
 - We stay in Python: one language across SDK and watcher, and the rules engine
   can share the semconv-generated constants from ADR-0001.
 - Cost: one more deployable and one more OTLP hop; the watcher sees only what

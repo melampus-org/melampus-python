@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "melampus"
+dynamic = ["version"]
+description = "Declare runtime intent and detect contract drift through OpenTelemetry."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{name = "Melampus contributors"}]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Typing :: Typed",
+]
+dependencies = ["opentelemetry-api>=1.25,<2"]
+
+[project.optional-dependencies]
+watch = ["opentelemetry-proto>=1.25,<2"]
+demo = ["opentelemetry-sdk>=1.25,<2", "opentelemetry-exporter-otlp-proto-http>=1.25,<2"]
+
+[project.scripts]
+melampus = "melampus.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/melampus-org/melampus-python"
+Documentation = "https://github.com/melampus-org/melampus-python/tree/main/docs"
+Issues = "https://github.com/melampus-org/melampus-python/issues"
+
+[dependency-groups]
+dev = ["hatchling>=1.27,<2", "pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.12,<1", "mypy>=1.15,<2", "pyyaml>=6,<7", "types-PyYAML>=6", "twine>=6.1,<8", "build>=1.2,<2", "pre-commit>=4,<5", "jsonschema>=4,<5"]
+
+[tool.hatch.version]
+path = "VERSION"
+pattern = '^(?P<version>\d+\.\d+\.\d+)$'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/melampus"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "semconv", "scripts", "docs", "examples", "benchmarks", "release", "Makefile", "pyproject.toml", "uv.lock", "VERSION", "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = ["release/_lib"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["opentelemetry.proto.*", "google.protobuf.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config --import-mode=importlib"
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { file = "VERSION" }]
