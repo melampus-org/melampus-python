@@ -2,9 +2,15 @@
 
 ## Scope and evidence
 
-The implementation covers the frozen schema, synchronous/async decorator, privacy
-rules, sampled checks, per-process execution limits, OTLP/HTTP watcher, finite CI
-sessions, and direct/stock-collector demos. It does not implement raw-content capture,
+The primary product is a local AI coding-session supervisor: reviewed SDK
+contracts, fresh execution after edits, required-check evidence, and synchronous
+Claude Code hooks that restrict progression until the implementation is repaired.
+See [ADR-0008](adr/0008-local-agent-session-first.md) and the
+[setup guide](AGENT-SESSION.md). Service monitoring is later expansion.
+
+The implementation also covers the frozen schema, synchronous/async decorator,
+privacy rules, sampled checks, per-process execution limits, OTLP/HTTP watcher,
+finite CI sessions, and direct/stock-collector demos. It does not implement raw-content capture,
 LLM judges, distributed budgets, gRPC/JSON OTLP reception, or a production backend.
 
 Verification commands:
@@ -12,6 +18,7 @@ Verification commands:
 ```sh
 make ci
 make demo
+make demo-otlp
 make benchmark
 # With a stock collector running:
 uv run --locked python scripts/demo_session.py \
@@ -21,15 +28,20 @@ uv run --locked python scripts/demo_session.py \
 The initial 60-test suite also passed against the declared OTel 1.25.0 minimum using
 the built wheel in an isolated Python 3.11 environment.
 
-The final 61-test suite passes on Python 3.11 and 3.14 with 93.6% coverage.
-`make ci`, actionlint, configuration drift audit, distribution preflight, and
-Trusted Publishing workflow audit all pass locally.
+The earlier SDK/watcher baseline had 61 tests and 93.6% coverage. The agent-session
+revision adds real-process integration checks for drift/repair, hook decisions,
+missing instrumentation, predicate substitution, omitted targets, suppression,
+rapid edits, stale runs, protected files, timeouts, process death and session
+ownership. Coverage includes disposable subprocesses. Current validation results
+are recorded in the PR; the earlier baseline's green CI is not evidence for a
+new revision. `make ci` also exercises the local session from an externally
+installed wheel.
 
 Local integration passed both healthy (zero findings, exit 0) and drift (one finding,
 exit 1) with the real OTel Python HTTP exporter, directly and through the official
 Collector Contrib 0.161.0 native binary. The binary SHA-256 was verified against
 its upstream release checksum. Docker was not running locally; the GitHub CI collector job passed the Compose demo.
-All eight checks passed on the implementation commit, including Linux Python
+All eight checks passed on the earlier implementation commit, including Linux Python
 3.11–3.14, macOS Python 3.11/3.14, the version guard, and the collector integration.
 
 **Performance limitation:** an initial macOS ARM64 / Python 3.11 recording-span
@@ -85,7 +97,8 @@ create ownership on your behalf.
 2. Dispatch **Publish Python package** from `main`, with the existing tag and
    `registry=testpypi`. It validates tag ancestry/version, rebuilds and tests, and
    uploads from a separate job with only OIDC permission.
-3. Install the TestPyPI artifact into a fresh environment and rerun the demo.
+3. Install the TestPyPI artifact with its `session` extra into a fresh environment
+   and rerun the local agent-session demo and enabled Claude hook walkthrough.
    Download the exact project/version from TestPyPI without dependencies, then
    install that wheel with dependencies from the normal PyPI index; avoid combining
    indexes for general dependency resolution.

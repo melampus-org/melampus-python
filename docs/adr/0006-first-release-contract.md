@@ -2,6 +2,10 @@
 
 Status: Accepted for implementation — 2026-09-27
 
+The SDK/wire contract remains current. [ADR-0008](0008-local-agent-session-first.md)
+adds the primary local agent-session workflow and the optional `session` extra;
+its disposable runner owns tracer setup on behalf of local scenarios.
+
 ## Decision
 
 The first release is **0.1.0 (alpha)**, distribution/import name `melampus`.

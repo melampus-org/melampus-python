@@ -1,22 +1,99 @@
 # Melampus
 
-Declare what a Python function is meant to do. Observe whether its runtime checks
-agree, using standard OpenTelemetry spans and a local drift-reporting CLI.
+Keep an AI coding session aligned with reviewed intent. Give the agent a small
+set of SDK contracts, run a local supervisor beside it, and feed execution
+failures back into repair before the agent continues building.
 
 **0.1.0 alpha is in preparation; no PyPI release is claimed yet.** The SDK and
-wire schema are experimental. No SaaS, LLM, or custom collector is required.
+wire schema are experimental. The supervisor needs no SaaS, LLM judge, tracing
+backend, collector, or unit-test framework. Python 3.11+, macOS/Linux.
 
-## Try the complete demo
+For a one-command demonstration of detection, agent hook decisions, and recovery:
+`uv sync --locked --all-extras && make demo` (no model request is made).
+
+## Start beside your coding agent
+
+```text
+Reviewed intent + SDK checks + executable scenario
+                        ↓
+Agent writes instrumented code → local supervisor executes fresh code
+             ↑                                  ↓
+             └──── repair ← drift / missing evidence
+                                                ↓
+                          healthy → continue the next change
+```
+
+From this checkout, install the session dependencies and activate the same
+environment in both terminals:
+
+```sh
+uv sync --locked --all-extras
+source .venv/bin/activate
+cd examples/agent-session
+melampus session
+```
+
+In another terminal, activate that environment, enter `examples/agent-session`,
+and start `claude`. The example includes reviewed contracts, an input scenario,
+agent instructions, and synchronous hooks. Review/enable the project hooks in
+Claude Code before using them. Ask it to change `pricing.py`; it must preserve
+the imported SDK contract. The supervisor polls source changes every 0.5 seconds
+and checks the current revision again at each hook boundary.
+
+Drift blocks shell/other progression tools and completion while leaving reads
+and scoped Edit/Write repairs available. The gate reopens after fresh healthy
+evidence. Removed instrumentation, skipped required checks, timeouts, crashes,
+changed contracts, and a dead supervisor cannot count as a pass.
+
+**Start here:** [setup and repair walkthrough](examples/agent-session/README.md) ·
+[agent integration, limits, and test/CI comparison](docs/AGENT-SESSION.md).
+
+This detects violations of **reviewed executable claims on exercised inputs**.
+It cannot infer arbitrary intent from prose, inspect unfinished model tokens,
+prove unexecuted behavior, or guarantee the absence of all AI-generated slop.
+Review the claims and scenarios before asking the agent to implement them.
+
+## SDK contracts travel with the code
+
+Keep the reviewed definition in `intent.py`:
+
+```python
+from melampus import Check, Contract
+
+PRICE = Contract(
+    intent="Return a nonnegative price in cents",
+    checks=(Check("nonnegative", lambda value: value >= 0, "Price is nonnegative."),),
+)
+CONTRACTS = {"pricing:price": PRICE}
+```
+
+The agent writes `pricing.py`:
+
+```python
+from intent import PRICE
+
+
+@PRICE.instrument(generator="claude-code")
+def price(cents: int) -> int:
+    return max(0, cents)
+```
+
+The session runner owns local OTel setup automatically. It verifies that the
+function used the reviewed check objects and that every required check actually
+ran. No network export is needed for this local path. The plain `@instrumented`
+API remains available for applications that own their tracing configuration.
+
+## Optional OTLP foundation demo
 
 Requires Python 3.11+ and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 From this repository:
 
 ```sh
 uv sync --locked --all-extras
-make demo
+make demo-otlp
 ```
 
-The demo starts a finite watcher session, sends real OTLP from a healthy call,
+This lower-level demo starts a finite watcher session, sends real OTLP from a healthy call,
 then repeats with a seeded failure. It verifies zero healthy findings, exactly
 one drift finding, and the corresponding exit codes. The watcher prints the
 function, rule ID, contract hash, predicate result, and trace/span references.

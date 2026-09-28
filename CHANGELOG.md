@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Local AI coding-session supervisor, reviewed SDK Contract objects, fresh-process
+  scenario execution, required-check coverage, and revision-bound repair evidence.
+- Agent-neutral gate and synchronous Claude Code hooks that restrict progression
+  and completion during drift/incomplete evidence while permitting scoped repair.
+- Runnable generation/drift/repair example and setup guide; local coding is the
+  first-release focus, with broader service monitoring reserved for expansion.
 - Experimental `code_artifact` schema, generated constants and compatibility fixtures.
 - OTel API-only `instrumented` decorator for synchronous and async functions.
 - Hash-only declarations, predicate results, deterministic check sampling, shared
@@ -24,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Known limitations
 
 - Alpha wire/API stability; no content capture, gRPC/JSON receiver, or durable backend.
+- Local sessions support macOS/Linux and reviewed executable claims on exercised
+  inputs; they do not infer arbitrary intent or detect all generated-code defects.
 - The founding spec's <3% overhead target remains unmet; see docs/RELEASE.md.
 
 ## [0.0.0] - 2026-08-22

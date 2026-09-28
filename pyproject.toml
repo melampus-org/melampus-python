@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "melampus"
 dynamic = ["version"]
-description = "Declare runtime intent and detect contract drift through OpenTelemetry."
+description = "Keep AI coding sessions aligned with reviewed intent and local execution evidence."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
@@ -25,6 +25,7 @@ dependencies = ["opentelemetry-api>=1.25,<2"]
 [project.optional-dependencies]
 watch = ["opentelemetry-proto>=1.25,<2"]
 demo = ["opentelemetry-sdk>=1.25,<2", "opentelemetry-exporter-otlp-proto-http>=1.25,<2"]
+session = ["opentelemetry-sdk>=1.25,<2", "opentelemetry-exporter-otlp-proto-common>=1.25,<2", "opentelemetry-proto>=1.25,<2"]
 
 [project.scripts]
 melampus = "melampus.cli:main"
@@ -35,7 +36,7 @@ Documentation = "https://github.com/melampus-org/melampus-python/tree/main/docs"
 Issues = "https://github.com/melampus-org/melampus-python/issues"
 
 [dependency-groups]
-dev = ["hatchling>=1.27,<2", "pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.12,<1", "mypy>=1.15,<2", "pyyaml>=6,<7", "types-PyYAML>=6", "twine>=6.1,<8", "build>=1.2,<2", "pre-commit>=4,<5", "jsonschema>=4,<5"]
+dev = ["hatchling>=1.27,<2", "pytest>=8,<10", "pytest-cov>=7,<8", "coverage>=7.10.6,<8", "ruff>=0.12,<1", "mypy>=1.15,<2", "pyyaml>=6,<7", "types-PyYAML>=6", "twine>=6.1,<8", "build>=1.2,<2", "pre-commit>=4,<5", "jsonschema>=4,<5"]
 
 [tool.hatch.version]
 path = "VERSION"
@@ -69,3 +70,6 @@ addopts = "-ra --strict-markers --strict-config --import-mode=importlib"
 
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }, { file = "VERSION" }]
+
+[tool.coverage.run]
+patch = ["subprocess"]

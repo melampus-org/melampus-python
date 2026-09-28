@@ -2,8 +2,16 @@
 
 Status: Implementation baseline for 0.1.0 alpha · License: Apache-2.0 · Python 3.11+ · OTel API ≥ 1.25
 
-The precise first-release contract is [ADR-0006](adr/0006-first-release-contract.md);
-it takes precedence over aspirational pilot goals below.
+The first-release product is the **local agent generation → evidence → repair loop**
+defined in [ADR-0008](adr/0008-local-agent-session-first.md). Start with
+[the agent-session guide](AGENT-SESSION.md). Its dedicated process watches edits,
+executes SDK-instrumented code, and gates agent progression on fresh evidence.
+Production/service monitoring is later expansion.
+
+[ADR-0006](adr/0006-first-release-contract.md) defines the underlying SDK/wire
+contract. The original hackathon proposal below is retained as historical context;
+its deferral of live generation hooks is superseded by ADR-0008. Its broader
+pilot targets are not claims about current coverage or detection capability.
 
 ## Problem
 
@@ -80,7 +88,7 @@ OTel Collector), *when* `melampus watch` runs during a test or canary session,
 exits 0 for evaluated healthy checks, 1 for drift, and 2 for incomplete/error
 evidence. Producers flush and collectors drain before the session deadline.
 
-## MVP cut line — the 5-minute hackathon demo
+## Historical MVP cut line — superseded for the 0.1.0 product by ADR-0008
 
 The demo shows exactly this, in order:
 

@@ -56,6 +56,7 @@ ENV/
 .claude/settings.local.json
 .cursor/settings.local.json
 .mcp.local.json
+.melampus/
 
 # macOS
 .DS_Store

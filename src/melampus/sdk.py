@@ -101,6 +101,10 @@ class Policy:
 
 DEFAULT_POLICY = Policy()
 
+# Installed only inside the disposable local-session runner. The core SDK still
+# owns no tracer provider and has no supervisor dependency.
+_declaration_validator: Callable[[str, str, tuple[Check, ...], tuple[str, ...]], None] | None = None
+
 
 def _sampled(check: Check, span: Span) -> bool:
     if check.sample in (0, 1):
@@ -180,6 +184,8 @@ def instrumented(
         if inspect.isgeneratorfunction(function) or inspect.isasyncgenfunction(function):
             raise TypeError("generator functions are not supported")
         path = f"{function.__module__}:{function.__qualname__}"
+        if _declaration_validator is not None:
+            _declaration_validator(path, intent, frozen_checks, tuple(assumptions))
         if len(path) > 256 or not path.isprintable():
             raise ValueError("function path must contain at most 256 printable characters")
         attributes = {**declaration, sc.FUNCTION: path}

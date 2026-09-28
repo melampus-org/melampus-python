@@ -1,6 +1,19 @@
 # Security
 
-This alpha supports local/CI observation and trusted-network collector forwarding.
+The primary workflow runs reviewed local scenarios alongside a coding agent.
+Scenarios and generated implementations run with the user's permissions; the
+fresh process is not a sandbox. Use deterministic local inputs and avoid
+production credentials or destructive side effects. The supervisor bounds each
+run and terminates its process group, but cannot control deliberately detached
+children or external side effects.
+
+The local session gate uses a per-session token and loopback binding. Its state
+file is owner-readable/writable. This protects against accidental cross-session
+requests, not a hostile process running as the same user. Hook enforcement
+requires enabled synchronous hooks and a cooperative agent; it is not an OS
+security boundary. Missing/stale evidence blocks normal progression.
+
+The optional OTLP path supports local/CI observation and trusted-network collector forwarding.
 The watcher has no authentication or TLS and is not a durable tracing backend.
 Keep its default loopback bind; secure any remote deployment outside this process.
 

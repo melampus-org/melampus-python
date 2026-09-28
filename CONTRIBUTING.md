@@ -11,6 +11,9 @@ make ci
 `make format` changes formatting; `make lint` is read-only. `uv.lock` pins developer
 tools; CI runs the same Make targets. Run `make test` for a focused functional check,
 `make cov` for coverage, and `make benchmark` for overhead measurements.
+`make demo` exercises the local coding-session protocol and repair cycle without
+an LLM request; `make demo-otlp` exercises the optional tracing foundation.
+Subprocess coverage is enabled so disposable scenario runners are measured too.
 
 Wire names originate in `semconv/code_artifact.yaml`. After a reviewed wire change:
 

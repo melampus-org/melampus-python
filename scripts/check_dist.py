@@ -27,6 +27,9 @@ def main() -> None:
             "melampus/py.typed",
             "melampus/sdk.py",
             "melampus/watcher.py",
+            "melampus/session.py",
+            "melampus/contracts.py",
+            "melampus/_probe.py",
         ):
             assert required in names, required
         metadata = email.message_from_bytes(archive.read(f"melampus-{version}.dist-info/METADATA"))
@@ -42,6 +45,11 @@ def main() -> None:
             "README.md",
             "tests/test_sdk.py",
             "semconv/code_artifact.yaml",
+            "examples/agent-session/.claude/settings.json",
+            "examples/agent-session/intent.py",
+            "examples/agent-session/exercise.py",
+            "docs/AGENT-SESSION.md",
+            "scripts/demo_agent_session.py",
         ):
             assert any(name.endswith("/" + suffix) for name in names), suffix
     with tempfile.TemporaryDirectory(prefix="melampus-dist-") as temporary:
@@ -83,6 +91,20 @@ def main() -> None:
         )
         subprocess.run(
             ["uv", "run", "--no-project", "--with", str(wheel), "melampus", "--version"],
+            cwd=temp,
+            env=env,
+            check=True,
+        )
+        subprocess.run(
+            [
+                "uv",
+                "run",
+                "--no-project",
+                "--with",
+                f"melampus[session] @ {wheel.as_uri()}",
+                "python",
+                str(ROOT / "scripts/demo_agent_session.py"),
+            ],
             cwd=temp,
             env=env,
             check=True,

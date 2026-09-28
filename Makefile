@@ -1,4 +1,4 @@
-.PHONY: dev lint typecheck test cov semconv build ci format demo benchmark
+.PHONY: dev lint typecheck test cov semconv build ci format demo demo-otlp benchmark
 
 dev:
 	uv sync --locked --all-extras
@@ -22,6 +22,8 @@ format:
 	uv run --locked ruff check --fix .
 	uv run --locked ruff format .
 demo:
+	uv run --locked python scripts/demo_agent_session.py
+demo-otlp:
 	uv run --locked python scripts/demo_session.py
 benchmark:
 	uv run --locked python benchmarks/overhead.py
