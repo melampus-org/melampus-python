@@ -1,0 +1,33 @@
+{
+  "source": "post-run replay of saved source snapshots on public fixture inputs",
+  "inputs_cents": [
+    -1,
+    0,
+    1200,
+    10000,
+    12000
+  ],
+  "outputs": {
+    "before.py": [
+      0,
+      0,
+      1200,
+      10000,
+      10000
+    ],
+    "drift.py": [
+      -1,
+      0,
+      1200,
+      10000,
+      12000
+    ],
+    "after.py": [
+      0,
+      0,
+      1200,
+      10000,
+      10000
+    ]
+  }
+}

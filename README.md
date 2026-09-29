@@ -11,6 +11,10 @@ backend, collector, or unit-test framework. Python 3.11+, macOS/Linux.
 For a one-command demonstration of detection, agent hook decisions, and recovery:
 `uv sync --locked --all-extras && make demo` (no model request is made).
 
+See the [recorded Claude Code repair](docs/demos/pricing-session/README.md) for a
+visual walkthrough, actual hook logs, source comparison, and commands to record
+the same example with your own agent account.
+
 ## Start beside your coding agent
 
 ```text
