@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Melampus — a recorded Claude coding session</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#071a2f;--ink:#14253a;--muted:#526170;--blue:#1268e8;--soft:#e9f1ff;--green:#08785c;--red:#a32d38;--paper:#f4f1ea;--white:#fffefa;--line:#cbd0d5}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 Manrope,system-ui,sans-serif}a{color:var(--blue);text-underline-offset:4px}a:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:5px}header,main,footer{max-width:1160px;margin:auto;padding:0 36px}header{display:flex;justify-content:space-between;align-items:center;min-height:90px;border-bottom:1px solid var(--line)}.brand{font-weight:800;font-size:23px;letter-spacing:-1px;color:var(--navy);text-decoration:none}.brand span{color:var(--blue)}nav{display:flex;gap:24px}nav a{font-size:13px;color:var(--ink);text-decoration:none}h1,h2,h3,p{margin:0}h1{font-size:clamp(42px,6.5vw,76px);line-height:1.06;letter-spacing:-3px;max-width:760px;font-weight:800}h1 em{font-style:normal;color:var(--blue)}h2{font-size:clamp(28px,3.4vw,39px);line-height:1.18;letter-spacing:-1.25px;max-width:850px}h3{font-size:18px;line-height:1.35}p{max-width:740px}.eyebrow,.label,.time,.state{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.04em}.eyebrow{color:var(--blue);margin-bottom:22px}.hero{padding:66px 0 50px}.hero-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:60px;margin-top:30px}.lede{font-size:19px;line-height:1.65}.context{border-left:3px solid var(--ink);padding-left:22px;font-size:13px;color:var(--muted)}.context strong{display:block;color:var(--ink);font-size:15px;margin-bottom:8px}.context p+p{margin-top:10px}.primary{display:inline-block;background:var(--blue);color:white;padding:11px 19px;text-decoration:none;font-size:14px;font-weight:700;margin-top:24px}section{padding:45px 0;border-top:1px solid var(--line)}.section-head{display:flex;gap:20px;align-items:baseline;margin-bottom:25px}.section-head .label{color:var(--muted);white-space:nowrap}.intro{color:var(--muted);margin:16px 0 26px}.rules{display:flex;gap:0;margin:28px 0}.rules div{padding:4px 24px;border-left:1px solid var(--line);flex:1}.rules div:first-child{padding-left:0;border:0}.rules b{display:block;font-size:22px}.rules small{font-size:12px;color:var(--muted)}.diagram{background:var(--white);border:1px solid var(--line);padding:18px;margin:30px 0}.diagram svg{width:100%;height:auto;display:block}.diagram figcaption{font-size:12px;color:var(--muted);padding:8px 12px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:right;font-size:14px}th,td{padding:12px 16px;border-bottom:1px solid var(--line)}thead th{font-size:12px;font-weight:600;color:var(--muted);background:var(--white)}th:first-child{text-align:left}tbody th{font-weight:500;font-family:"IBM Plex Mono",monospace}.failed{color:var(--red);background:#fae9e5;font-weight:700}.caption{font-size:12px;color:var(--muted);margin-top:12px}.record-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:52px}.timeline{list-style:none;padding:0;margin:0}.timeline li{display:grid;grid-template-columns:76px 1fr;gap:18px;padding:0 0 28px}.timeline li>div{border-left:2px solid var(--line);padding:0 0 0 22px}.timeline .state{color:var(--green);display:block;font-size:10px;text-transform:uppercase;margin-bottom:5px}.timeline .drift .state,.timeline .blocked .state{color:var(--red)}.timeline .drift>div,.timeline .blocked>div{border-left-color:var(--red)}.time{color:var(--muted);padding-top:2px}.timeline p{font-size:14px;color:var(--muted);margin-top:7px}.evidence-note{align-self:start;background:var(--soft);padding:26px}.evidence-note ul{padding-left:18px;font-size:14px}.stats{display:flex;gap:30px;border-top:1px solid #c0d3ea;padding-top:20px;margin-top:22px}.stats b{display:block;font-size:27px;line-height:1.2}.stats small{font-size:11px}.quote{background:var(--navy);color:white;padding:36px 40px;margin:4px 0 0}.quote .label{color:#a4c8ff}.quote blockquote{font-size:27px;line-height:1.4;letter-spacing:-.6px;margin:16px 0}.quote p{font-size:13px;color:#b6c7da}.code-view{border:1px solid var(--line);background:var(--white);margin-top:18px;min-height:110px;max-width:100%;overflow:hidden}.code-view>p{padding:20px;font-size:13px;color:var(--muted)}.caution{border-left:3px solid #b77722;padding:12px 22px;margin:24px 0;background:#f7eddc;font-size:14px}.caution strong{display:block;margin-bottom:6px}details{border-top:1px solid var(--line);padding:17px 0}summary{cursor:pointer;font-size:14px;font-weight:700}.pair{display:grid;grid-template-columns:1fr 1fr;gap:42px}.pair article{border-top:3px solid var(--navy);padding-top:20px}.pair p{font-size:14px;margin-top:12px;color:var(--muted)}.pair .state{display:block;color:var(--red);margin-bottom:9px}.steps{list-style:none;padding:0;counter-reset:step}.steps>li{counter-increment:step;border-top:1px solid var(--line);padding:24px 0 12px;display:grid;grid-template-columns:48px 1fr;gap:16px}.steps>li:before{content:counter(step,decimal-leading-zero);font-family:"IBM Plex Mono",monospace;color:var(--blue);font-size:20px}.steps p{font-size:14px;margin:8px 0 12px;color:var(--muted)}pre{padding:18px 20px;background:var(--navy);color:#d7e7fb;overflow:auto;font:12px/1.8 "IBM Plex Mono",monospace;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}code{font-family:"IBM Plex Mono",monospace;font-size:.85em}.terminal-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}.terminal-pair .label{display:block;margin-top:12px}.benefits li{margin:10px 0;font-size:14px}.downloads{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;margin-top:25px}.downloads a{padding:11px 0;border-bottom:1px solid var(--line);font:12px "IBM Plex Mono",monospace;text-decoration:none;display:flex;justify-content:space-between}.downloads a:hover{text-decoration:underline}footer{padding-top:24px;padding-bottom:38px;font-size:12px;color:var(--muted)}.endnote{margin-top:24px;font-size:13px;color:var(--muted)}
+@media(max-width:720px){header,main,footer{padding-left:20px;padding-right:20px}header{align-items:flex-start;flex-direction:column;justify-content:center;gap:12px;padding-top:18px;padding-bottom:18px}nav{gap:19px}h1{letter-spacing:-1.8px}.hero{padding-top:40px}.hero-grid,.record-grid,.pair,.terminal-pair{grid-template-columns:1fr;gap:24px}.rules{gap:12px}.rules div{padding:4px 12px}.rules b{font-size:17px}.section-head{gap:12px;align-items:flex-start}.section-head .label{padding-top:6px}.diagram{padding:7px}.diagram svg{min-width:620px}.diagram{overflow:auto}.quote{padding:26px 22px}.quote blockquote{font-size:22px}.downloads{grid-template-columns:1fr}.timeline li{grid-template-columns:64px 1fr;gap:9px}.timeline li>div{padding-left:15px}.steps>li{grid-template-columns:30px 1fr;gap:12px}.steps>li>div{min-width:0}section{padding:32px 0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white}nav,.primary{display:none}section{break-inside:avoid}.hero{padding-top:30px}.code-view{overflow:visible}}
+::selection{background:#c4dcff;color:var(--navy)}html{scrollbar-color:#8495a7 var(--paper);scroll-behavior:auto}table,.time,.stats{font-variant-numeric:tabular-nums}.context,.caution{border-left-width:1px}.timeline li>div{border-left-width:1px}.pair article{border-top-width:1px}.code-view{padding:12px}h1,h2{letter-spacing:-.03em;text-wrap:balance}.brand{letter-spacing:-.03em}.primary:hover{background:#0d52b9}.label,.state{font-family:Manrope,system-ui,sans-serif}
+</style>
+</head>
+<body>
+<header><a class="brand" href="#top">melampus<span>.</span></a><nav aria-label="Walkthrough"><a href="#recording">Recording</a><a href="#repair">Repair</a><a href="#compare">Tests</a><a href="#try">Try it</a><a href="#evidence">Evidence</a></nav></header>
+<main id="top">
+<div class="hero">
+<h1>Claude stopped.<br><em>The contract held.</em></h1>
+<div class="hero-grid"><div><p class="lede">A pricing refactor breaks two approved rules. Melampus blocks the next action, Claude repairs the code, and fresh evidence lets the session continue.</p><a class="primary" href="#recording">Follow the recorded session ↓</a></div><aside class="context"><strong>A real run, with a deliberate defect.</strong><p>The harness seeds the defect. Claude Code performs the repair through real Melampus hooks.</p><p>{{DATE}} · {{CLAUDE_VERSION}}<br>One local demonstration; no claim of typical speed or review savings.</p></aside></div>
+</div>
+<section>
+<div class="section-head"><span class="label">01 / INTENT</span><h2>A price must stay within its approved bounds.</h2></div>
+<p class="intro">The owner reviews <code>intent.py</code> and the five scenario inputs. The agent edits <code>pricing.py</code>. A dedicated Melampus process watches that code and executes the scenario again when it changes.</p>
+<div class="rules"><div><b>Integer</b><small>Output uses whole cents</small></div><div><b>≥ 0</b><small>No negative price</small></div><div><b>≤ 10,000</b><small>Approved ceiling, in cents</small></div></div>
+<figure class="diagram">
+<svg viewBox="0 0 1000 198" role="img" aria-labelledby="flow-title flow-desc">
+<title id="flow-title">A local feedback loop around the coding agent</title><desc id="flow-desc">Claude edits the implementation. Melampus executes five inputs and three checks in a separate local process. Hooks use fresh evidence to allow progression or return the agent to repair.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1268e8"/></marker></defs>
+<g font-family="Manrope,system-ui,sans-serif"><rect x="14" y="24" width="258" height="100" fill="#e9f1ff"/><text x="36" y="52" fill="#526170" font-size="12">CODING TERMINAL</text><text x="36" y="80" fill="#14253a" font-size="20" font-weight="700">Claude edits pricing.py</text><text x="36" y="103" fill="#526170" font-size="13">Implementation remains repairable</text>
+<path d="M 284 73 H 347" stroke="#1268e8" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="360" y="24" width="270" height="100" fill="#071a2f"/><text x="382" y="52" fill="#a4c8ff" font-size="12">DEDICATED LOCAL PROCESS</text><text x="382" y="80" fill="white" font-size="20" font-weight="700">Melampus runs the code</text><text x="382" y="103" fill="#b6c7da" font-size="13">5 inputs × 3 reviewed checks</text>
+<path d="M 642 73 H 705" stroke="#1268e8" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="718" y="24" width="268" height="100" fill="#e9f1ff"/><text x="740" y="52" fill="#526170" font-size="12">AGENT HOOKS</text><text x="740" y="80" fill="#14253a" font-size="20" font-weight="700">Evidence gates progress</text><text x="740" y="103" fill="#526170" font-size="13">Allow next action or require repair</text>
+<path d="M 852 137 V 168 H 143 V 136" stroke="#1268e8" stroke-width="2" fill="none" marker-end="url(#arrow)"/><rect x="368" y="151" width="266" height="30" fill="#fffefa"/><text x="501" y="172" text-anchor="middle" fill="#1268e8" font-size="13">Failed checks return to the agent</text></g>
+</svg>
+<figcaption>Runs during generation, before unit tests or CI need to be invoked. No backend or telemetry collector is required for this local loop.</figcaption>
+</figure>
+<div class="table-wrap"><table><thead><tr><th>Input · cents</th><th>Original</th><th>Seeded defect</th><th>Claude’s repair</th></tr></thead><tbody>{{ROWS}}</tbody></table></div>
+<p class="caption">Outputs come from a post-run replay of saved source snapshots on these public fixtures. The SDK evidence records check results, not raw argument or result values.</p>
+</section>
+<section id="recording">
+<div class="section-head"><span class="label">02 / RECORDING</span><h2>Watch the next action change.</h2></div>
+<div class="record-grid"><ol class="timeline">{{TIMELINE}}</ol><aside class="evidence-note"><h3>What this run verified</h3><ul><li>Automatic detection before the harness queried the gate.</li><li>A real Claude shell request denied by its PreToolUse hook.</li><li>Reading and a repair edit remained available.</li><li>Five reviewed files retained their recorded hashes.</li></ul><div class="stats"><div><b>{{EDIT_COUNT}}</b><small>agent Edit</small></div><div><b>{{PASSED}}</b><small>passing evaluations</small></div></div><p class="caption">Observed detection: {{DETECTION}} seconds in this run. Timing depends on the scenario, machine and configuration.</p></aside></div>
+<div class="quote"><span class="label">THE FAILURE REACHED THE AGENT</span><blockquote>“The hook blocked it as expected; not retrying.”</blockquote><p>Claude’s recorded response after its harmless <code>printf</code> request was denied. The request was deliberately prompted to make the gate observable.</p></div>
+</section>
+<section id="repair">
+<div class="section-head"><span class="label">03 / REPAIR</span><h2>One implementation edit.<br>The same reviewed checks.</h2></div>
+<p class="intro">Actual <code>pricing.py</code> before and after Claude’s Edit. The instrumentation remains in place so the fresh implementation is checked again.</p>
+<div id="code-diff" class="code-view"><p>Loading source comparison. If offline, download drift.py and after.py from Evidence below.</p></div>
+<div class="caution"><strong>Green means the checked claims passed.</strong>Claude also introduced <code>int(cents)</code>. These five integer inputs do not establish whether truncating floats or rejecting other types is acceptable. A passing report still needs a good contract and a review of semantic choices.</div>
+<details><summary>Inspect the approved contract · intent.py</summary><div id="contract-code" class="code-view"><p>Source available in Evidence below.</p></div></details>
+<details><summary>Inspect the executed scenario · exercise.py</summary><div id="scenario-code" class="code-view"><p>Source available in Evidence below.</p></div></details>
+</section>
+<section>
+<div class="section-head"><span class="label">04 / FAIL CLOSED</span><h2>Missing evidence also stops progression.</h2></div>
+<p class="intro">After the live repair, the harness ran two additional controls. These were scripted checks, not actions taken by Claude.</p>
+<div class="pair"><article><span class="state">INCOMPLETE · EXIT 2</span><h3>Remove the decorator</h3><p>The function can still return bounded prices, but its required checks no longer produce evidence. Melampus reports the missing checks.</p></article><article><span class="state">INCOMPLETE · EXIT 2</span><h3>Stop the supervisor</h3><p>The gate reports that the local supervisor is unavailable. A previous healthy result does not authorize a new success claim.</p></article></div>
+</section>
+<section id="compare">
+<div class="section-head"><span class="label">05 / UNIT TESTS</span><h2>The oracle is familiar.<br>The control point is different.</h2></div>
+<p class="intro">The runnable example makes two temporary edits and executes real pytest and Melampus processes. It distinguishes a test-coverage gap from the session behavior Melampus adds.</p>
+<div class="table-wrap"><table><thead><tr><th>Temporary edit</th><th>Smoke unit</th><th>Full boundary tests</th><th>Melampus</th><th>Next agent action</th></tr></thead><tbody><tr><th>Return input unchanged</th><td class="failed">Pass</td><td>Fail</td><td>Drift</td><td>Blocked</td></tr><tr><th>Remove instrumentation</th><td>Pass</td><td>Pass</td><td>Incomplete</td><td>Blocked</td></tr></tbody></table></div>
+<div class="pair" style="margin-top:30px"><article><span class="state">SAME FOUNDATION</span><h3>Good tests catch the same bad value</h3><p>When the complete boundary suite runs, it catches the unclamped return. Melampus has no secret source of intent; both approaches depend on reviewed executable claims and representative inputs.</p></article><article><span class="state" style="color:var(--blue)">ADDED SESSION PROTOCOL</span><h3>Evidence must stay attached and current</h3><p>The supervisor reruns after watched edits, treats missing instrumentation as incomplete, and gives the synchronous agent hook a decision for the current revision.</p></article></div>
+<div class="caution"><strong>Could hooks around pytest achieve similar control?</strong>Yes. A controller that runs the right tests after every relevant edit, detects missing or stale execution, preserves repair access, and blocks the agent on failure can provide similar protection. Melampus packages that loop around contracts attached to generated units; it complements the broader regression suite.</div>
+</section>
+<section id="try">
+<div class="section-head"><span class="label">06 / TRY IT</span><h2>Run the same example yourself.</h2></div>
+<p class="intro">Python 3.11+ and <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> on macOS or Linux. The recorder creates a disposable copy; it does not change the repository’s example.</p>
+<ol class="steps">
+<li><div><h3>Get the demo implementation</h3><p>This recording uses the first-release branch in <a href="https://github.com/melampus-org/melampus-python/pull/6">PR #6</a>. Publication on PyPI is not required.</p><pre>git clone --branch feat/first-release https://github.com/melampus-org/melampus-python.git
+cd melampus-python
+uv sync --locked --all-extras</pre></div></li>
+<li><div><h3>Try the protocol without a model request</h3><p>This version seeds and repairs the defect with a script. It exercises the real supervisor and gate, but is not an AI repair demonstration.</p><pre>uv run --locked python scripts/record_agent_demo.py --output demo-recordings/protocol</pre></div></li>
+<li><div><h3>Compare unit tests and the agent gate</h3><p>This makes two temporary edits, runs the smoke and boundary tests, queries a live Melampus session, then restores the source.</p><pre>uv run --locked python examples/agent-session/compare_with_unit_tests.py</pre></div></li>
+<li><div><h3>Record a real Claude Code repair</h3><p>Install and sign in to <a href="https://code.claude.com/docs/en/setup">Claude Code</a> first. This makes a request with your own account and configured model. Use a new output directory for each run.</p><pre>uv run --locked python scripts/record_agent_demo.py --live-claude --output demo-recordings/live</pre><p>Review <code>run.json</code>, the sanitized agent transcript, hook decisions, and source snapshots. Model behavior and timing can differ from this recording.</p></div></li>
+<li><div><h3>Keep Melampus beside your own coding session</h3><p>Open two terminals at the repository root. Review the sample’s contract, scenario, configuration and Claude hooks before enabling them.</p><div class="terminal-pair"><div><span class="label">TERMINAL A · SUPERVISOR</span><pre>source .venv/bin/activate
+cd examples/agent-session
+melampus session</pre></div><div><span class="label">TERMINAL B · YOUR AGENT</span><pre>source .venv/bin/activate
+cd examples/agent-session
+melampus gate
+claude</pre></div></div><p>Ask Claude to modify <code>pricing:price</code> while preserving <code>PRICE.instrument</code> and the reviewed intent. If intent needs to change, have the owner review it and restart the session. See the <a href="https://github.com/melampus-org/melampus-python/blob/feat/first-release/docs/AGENT-SESSION.md">agent-session guide</a> for configuration and adapters.</p></div></li>
+</ol>
+</section>
+<section>
+<div class="section-head"><span class="label">07 / VALUE</span><h2>Keep human review focused on intent.</h2></div>
+<div class="pair benefits"><article><h3>The loop handles repeated feedback</h3><ul><li>Re-executes the configured scenario when watched code changes.</li><li>Returns specific failed claims to the coding agent.</li><li>Blocks unrelated progression while allowing scoped repair.</li><li>Keeps reviewed assertions separate from implementation edits.</li></ul></article><article><h3>The team still owns the specification</h3><ul><li>Choose valuable predicates and representative scenarios.</li><li>Check coverage of the paths that matter.</li><li>Review meaningful behavior changes, including repair choices.</li><li>Keep unit tests, CI, security checks and code review.</li></ul></article></div>
+<p class="endnote">Tests with the same inputs and assertions can catch this same bug. Melampus adds the continuously running session loop, evidence freshness and agent action gating. It does not infer all business intent from prose or guarantee that generated code is correct.</p>
+</section>
+<section id="evidence">
+<div class="section-head"><span class="label">08 / EVIDENCE</span><h2>Inspect the run. Reproduce the result.</h2></div>
+<p class="intro">These downloads are embedded in this HTML. Sharing this file shares the recording, not the author’s AI session. Readers run their own copy with their own Claude account.</p>
+<div class="downloads">{{DOWNLOADS}}</div>
+<p class="endnote">Recorded {{DATE}} with Melampus 0.1.0 and {{CLAUDE_VERSION}}. Temporary paths were replaced with <code>&lt;demo-project&gt;</code>. Published messages omit authentication metadata and hidden reasoning. Fonts and the syntax viewer use public CDNs; narrative, tables and evidence downloads remain available offline.</p>
+</section>
+</main>
+<footer>Melampus / Recorded demonstration · Local agent loop · This page is a report, not a live dashboard or shared AI chat.</footer>
+<script type="application/json" id="recorded-code">{{CODE_DATA}}</script>
+<script type="module">
+const sources=JSON.parse(document.getElementById("recorded-code").textContent);
+try {
+ const {File,FileDiff}=await import("https://esm.sh/@pierre/diffs@1.2.10?bundle");
+ const options={theme:"github-light",themeType:"light",overflow:"wrap"};
+ const container=document.getElementById("code-diff");container.replaceChildren();
+ new FileDiff({...options,diffStyle:matchMedia("(max-width:720px)").matches?"unified":"split"}).render({oldFile:{name:"pricing.py",contents:sources["drift.py"]},newFile:{name:"pricing.py",contents:sources["after.py"]},containerWrapper:container});
+ for(const [id,name] of [["contract-code","intent.py"],["scenario-code","exercise.py"]]){
+  const el=document.getElementById(id);el.replaceChildren();new File(options).render({file:{name,contents:sources[name]},containerWrapper:el});
+ }
+} catch(error) {
+ for(const id of ["code-diff","contract-code","scenario-code"]){document.getElementById(id).innerHTML="<p>The syntax viewer is unavailable. Download the exact source files from Evidence below.</p>";}
+}
+</script>
+</body>
+</html>

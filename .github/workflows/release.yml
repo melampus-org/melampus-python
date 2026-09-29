@@ -1,58 +1,51 @@
 name: Release
-
-# Merge-side release: on push to main, if VERSION has no matching v* tag yet,
-# create the annotated tag and publish a GitHub Release with auto-assembled notes.
-#
-# Hardening: every action is pinned to an immutable commit SHA (tag in a trailing
-# comment), not a movable @vN tag.
-
 on:
   push:
     branches: [main]
-    paths:
-      - "VERSION"
-      - "CHANGELOG.md"
-
+    paths: [VERSION, CHANGELOG.md]
+  workflow_dispatch:
 permissions:
-  contents: write
-
+  contents: read
+concurrency:
+  group: release
+  cancel-in-progress: false
 jobs:
   release:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Set up cached CI tools
-        uses: ./.github/actions/setup-ci-tools
-
-      - name: Tag & release when VERSION has no tag
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.12.17"
+          python-version: "3.11"
+      - name: Validate and build before tagging
+        run: make ci
+      - name: Tag and publish validated GitHub artifacts
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name  "github-actions[bot]"
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           ver="$(tr -d '[:space:]' < VERSION)"
-          [ -n "$ver" ] || { echo "::error::VERSION is empty"; exit 1; }
+          [[ "$ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Invalid VERSION'; exit 1; }
           tag="v$ver"
-
           if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-            echo "$tag already exists — nothing to release."
-            exit 0
-          fi
-
-          prev="$(git tag --list 'v*' | sort -V | tail -1)"
-          echo "Releasing $tag (previous: ${prev:-none})"
-          if [ -n "$prev" ]; then
-            python3 release/_lib/release_notes.py "$ver" --prev-tag "$prev" > notes.md
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "$tag already released"
+              exit 0
+            fi
+            test "$(git rev-list -n 1 "$tag")" = "$GITHUB_SHA" || { echo 'Existing tag does not identify this build'; exit 1; }
           else
-            python3 release/_lib/release_notes.py "$ver" > notes.md
+            uv run --locked python release/_lib/version_check.py --strict
+            git tag -a "$tag" -m "$tag"
+            git push origin "$tag"
           fi
-
-          git tag -a "$tag" -m "v$ver"
-          git push origin "$tag"
-          gh release create "$tag" --title "v$ver" --notes-file notes.md
-          echo "::notice::Released $tag"
+          uv run --locked python release/_lib/release_notes.py "$ver" > notes.md
+          gh release create "$tag" --verify-tag --prerelease --title "$tag (alpha)" --notes-file notes.md dist/*

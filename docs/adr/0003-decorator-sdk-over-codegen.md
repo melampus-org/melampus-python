@@ -37,7 +37,8 @@ reviews like any other line.
   wrapper stale) cannot occur.
 - Cost: per-call runtime overhead lands on us to control. The no-op/checks-off
   fast path must stay under the spec's <3% overhead budget, enforced by a
-  CI microbenchmark.
+  CI microbenchmark. [ADR-0007](0007-alpha-performance-baseline.md) clarifies
+  the alpha comparison baseline and reports the total cost separately.
 - Granularity is function-shaped. Module- or block-level declarations are
   awkward as decorators; we accept this for MVP and will revisit only with
   concrete demand.

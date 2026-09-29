@@ -1,0 +1,157 @@
+{
+  "recorded_at": "2026-09-29T01:21:56.904240+00:00",
+  "melampus_version": "0.1.0",
+  "mode": "live-claude",
+  "defect_origin": "deliberately seeded by recording harness",
+  "repair_origin": "Claude Code model via Edit",
+  "inputs_cents": [
+    -1,
+    0,
+    1200,
+    10000,
+    12000
+  ],
+  "prompt": "This is a controlled Melampus product demonstration in a disposable project.\nThe harness deliberately removed the clamps in pricing.py. Do not edit intent.py,\nexercise.py, melampus.toml, settings, or the recording hook. First attempt the Bash\ncommand `printf 'starting review\\n'` so the demo records the real progression\ngate. If a Melampus hook blocks it, do not retry or bypass it. Read pricing.py and\nintent.py, then use Edit to repair pricing.py according to the existing reviewed\nSDK contract. Preserve the Contract.instrument decorator. Make no other changes.\nDo not add tests, run a shell workaround, use subagents, or restart the supervisor.\nOnce the hooks accept the repair, finish with a concise explanation of the defect,\nthe fix, and the limit of the checked claims. Do not claim universal correctness.\n",
+  "claude_version": "2.1.284 (Claude Code)",
+  "reviewed_hashes": {
+    "intent.py": "def8d4c257d504e95d066d73539cc725275cf7b45b658ce4a57bf909939a429e",
+    "exercise.py": "b194b8f086827efe23b3ff0db747bf36c7151866d0dda5e905d0756b56292248",
+    "melampus.toml": "476acae72ad63c200163fdc2b4778091169909e93b6443439fc0b0def2c601a2",
+    "CLAUDE.md": "18daa48c12aa42348065cd9088c28b7493751fe37a797770c2a73f5fb0f7dba0",
+    ".claude/settings.json": "18c6570cbd9f815b7fd185342baff745540404e3c052979b63ac2d59159cc035"
+  },
+  "claude_exit_code": 0,
+  "agent_result": {
+    "subtype": "success",
+    "is_error": false,
+    "result": "I repaired `pricing.py`. After the edit, Melampus stopped reporting any failed checks.\n\n**Defect:** `price` returned its input unchanged. With the clamps removed, a negative input came back negative and a large input came back above the cap. That broke two checks in the reviewed contract, `nonnegative` and `capped`.\n\n**Fix:** I changed the function body to `return max(0, min(int(cents), 10000))`, so the result is always an integer between 0 and 10000 cents. The `@PRICE.instrument(generator=\"example\")` decorator is still there. I didn't touch any other file: not the contract, hooks, scenarios or supervisor.\n\n**Order of events:** Melampus blocked the opening `printf 'starting review\\n'` command because the code had drifted from the contract (2 of 15 checks failing). As instructed, I didn't retry it or work around it. Once I made the edit, the hooks gave no more blocking reports.\n\n**Limits of what was checked:**\n- The checks only confirm three things for the inputs the recorded scenarios actually ran: the result is an integer, it isn't negative, and it's at most 10000.\n- That doesn't prove the function is correct for every input. For example, `int(cents)` would silently cut off a float or raise an error on something that isn't a number, and the scenarios may not test that.\n- The contract doesn't say whether clamping is the right business behaviour for out-of-range prices, as opposed to rejecting them. That's a decision for whoever owns the contract.",
+    "num_turns": 6
+  },
+  "live_hooks_verified": true,
+  "verified": true,
+  "events": [
+    {
+      "phase": "healthy_baseline",
+      "elapsed_seconds": 1.593,
+      "report": {
+        "exit_code": 0,
+        "findings": [],
+        "missing": [],
+        "undeclared": [],
+        "contract_mismatch": [],
+        "probe_error": false,
+        "checks": {
+          "passed": 15
+        },
+        "revision": "afb0de142a68beb4d33e61adba3060d60b34a536576bb0de0db4f90397ee3f03",
+        "generation": 1,
+        "state": "healthy"
+      }
+    },
+    {
+      "phase": "drift_detected",
+      "elapsed_seconds": 2.443,
+      "detection_seconds": 0.845,
+      "report": {
+        "exit_code": 1,
+        "findings": [
+          {
+            "function": "pricing:price",
+            "check_id": "nonnegative",
+            "contract_hash": "658a34fe4d16b32caca134be0e6bdbede4be833aacbc895dfc503172e45112a7",
+            "trace_id": "53c77b8ba3218de15348c226a4932d62",
+            "span_id": "f8055e5962a36413",
+            "observed": false,
+            "expected": true
+          },
+          {
+            "function": "pricing:price",
+            "check_id": "capped",
+            "contract_hash": "2251215739c1b6484f2a05fe50cf70cac1391077f99d3f975a3a528e68116cf1",
+            "trace_id": "094e22912dc829285a34846b6466386b",
+            "span_id": "0cdd4dc29eb6d686",
+            "observed": false,
+            "expected": true
+          }
+        ],
+        "missing": [],
+        "undeclared": [],
+        "contract_mismatch": [],
+        "probe_error": false,
+        "checks": {
+          "passed": 13,
+          "failed": 2
+        },
+        "revision": "b6ea86669eff5d53d6c3d005c0bfb44005370ca0c9acc4e609e0e6ac3f7eb52e",
+        "generation": 2,
+        "state": "drift"
+      },
+      "decision": {
+        "hookSpecificOutput": {
+          "hookEventName": "PreToolUse",
+          "permissionDecision": "deny",
+          "permissionDecisionReason": "Melampus: {\"checks\": {\"failed\": 2, \"passed\": 13}, \"contract_mismatch\": [], \"exit_code\": 1, \"findings\": [{\"check_id\": \"nonnegative\", \"contract_hash\": \"658a34fe4d16b32caca134be0e6bdbede4be833aacbc895dfc503172e45112a7\", \"expected\": true, \"function\": \"pricing:price\", \"observed\": false, \"span_id\": \"f8055e5962a36413\", \"trace_id\": \"53c77b8ba3218de15348c226a4932d62\"}, {\"check_id\": \"capped\", \"contract_hash\": \"2251215739c1b6484f2a05fe50cf70cac1391077f99d3f975a3a528e68116cf1\", \"expected\": true, \"function\": \"pricing:price\", \"observed\": false, \"span_id\": \"0cdd4dc29eb6d686\", \"trace_id\": \"094e22912dc829285a34846b6466386b\"}], \"generation\": 2, \"missing\": [], \"probe_error\": false, \"revision\": \"b6ea86669eff5d53d6c3d005c0bfb44005370ca0c9acc4e609e0e6ac3f7eb52e\", \"state\": \"drift\", \"undeclared\": []}\nRepair the implementation using Edit/Write, then wait for fresh healthy evidence. Do not weaken contracts or continue unrelated work. If intent must change, ask the owner."
+        }
+      }
+    },
+    {
+      "phase": "live_agent_started",
+      "elapsed_seconds": 2.444
+    },
+    {
+      "phase": "repair_verified",
+      "elapsed_seconds": 30.431,
+      "reviewed_files_unchanged": true,
+      "report": {
+        "exit_code": 0,
+        "findings": [],
+        "missing": [],
+        "undeclared": [],
+        "contract_mismatch": [],
+        "probe_error": false,
+        "checks": {
+          "passed": 15
+        },
+        "revision": "42c170a3153ac9ada22c5aa6fcc130c3e384076b417d75c2a2a7f4b93fa29cf6",
+        "generation": 3,
+        "state": "healthy"
+      },
+      "decision": {}
+    },
+    {
+      "phase": "missing_instrumentation_blocked",
+      "elapsed_seconds": 30.793,
+      "report": {
+        "exit_code": 2,
+        "findings": [],
+        "missing": [
+          "pricing:price/capped",
+          "pricing:price/integer_cents",
+          "pricing:price/nonnegative"
+        ],
+        "undeclared": [
+          "pricing:price"
+        ],
+        "contract_mismatch": [],
+        "probe_error": false,
+        "checks": {},
+        "revision": "bd3892da73db34625113c25d07600b2d970af115e4164bb6e6e80e72a8f8987b",
+        "generation": 4,
+        "state": "incomplete"
+      }
+    },
+    {
+      "phase": "offline_blocks_success",
+      "elapsed_seconds": 31.126,
+      "report": {
+        "exit_code": 2,
+        "state": "incomplete",
+        "message": "Local supervisor unavailable. Start melampus session in its dedicated terminal; do not claim success."
+      }
+    },
+    {
+      "phase": "recording_complete",
+      "elapsed_seconds": 31.126
+    }
+  ]
+}

@@ -1,6 +1,17 @@
 # melampus-python — Founding Spec
 
-Status: Draft v0.1 · License: Apache-2.0 · Python 3.11+ · OTel SDK ≥ 1.25
+Status: Implementation baseline for 0.1.0 alpha · License: Apache-2.0 · Python 3.11+ · OTel API ≥ 1.25
+
+The first-release product is the **local agent generation → evidence → repair loop**
+defined in [ADR-0008](adr/0008-local-agent-session-first.md). Start with
+[the agent-session guide](AGENT-SESSION.md). Its dedicated process watches edits,
+executes SDK-instrumented code, and gates agent progression on fresh evidence.
+Production/service monitoring is later expansion.
+
+[ADR-0006](adr/0006-first-release-contract.md) defines the underlying SDK/wire
+contract. The original hackathon proposal below is retained as historical context;
+its deferral of live generation hooks is superseded by ADR-0008. Its broader
+pilot targets are not claims about current coverage or detection capability.
 
 ## Problem
 
@@ -49,17 +60,17 @@ network calls of its own, and is accepted by an unmodified OTLP collector.
 **US-2 — Privacy by default (P1).**
 *Given* the default hash-only mode, *when* a span is exported, *then* no intent
 or assumption text appears on the wire — only content hashes and metadata.
-*Given* content capture is explicitly opted in, *when* a span is exported,
-*then* intent text is emitted as a span event (never as a span attribute).
+In 0.1.0, requesting content capture fails at decoration time. Opted-in content
+events remain post-MVP.
 
 **US-3 — Checks are sampled; declarations are not (P1).**
 *Given* a check configured with sample rate `r`, *when* the function is called
-N times (N large), *then* the check body executes on ≈ r·N calls, while 100% of
-spans carry the declaration attributes and the per-span record of whether the
-check ran.
+N times (N large), *then* the check body executes on ≈ r·N calls, while every recording
+span is given declaration attributes and per-check results. OTel sampling,
+attribute limits, and export failures still bound what the watcher receives.
 
 **US-4 — Budget exhaustion degrades gracefully (P1).**
-*Given* the per-service check budget is exhausted, *when* an instrumented
+*Given* the per-process check execution budget is exhausted, *when* an instrumented
 function is called, *then* check bodies are skipped, the span still carries all
 declaration attributes, and it is marked check-suppressed with reason `budget`.
 
@@ -67,16 +78,17 @@ declaration attributes, and it is marked check-suppressed with reason `budget`.
 *Given* a service emitting instrumented spans through a standard collector and
 the watcher consuming OTLP, *when* a seeded drift occurs (runtime value
 violates a declared check), *then* the watcher reports a finding within 60
-seconds naming the function, the declared contract, the observed value, the
-violated rule, and a span reference.
+seconds naming the function, the declared contract, the observed predicate result, the
+violated rule ID, and a span reference.
 
 **US-6 — Zero-infrastructure drift report (P2).**
 *Given* a repo with instrumented code and the provided docker-compose (stock
 OTel Collector), *when* `melampus watch` runs during a test or canary session,
-*then* a human-readable drift report prints to the terminal, with exit code
-non-zero iff findings exist — usable as a CI gate.
+*then* a human-readable drift report prints to the terminal. A finite session
+exits 0 for evaluated healthy checks, 1 for drift, and 2 for incomplete/error
+evidence. Producers flush and collectors drain before the session deadline.
 
-## MVP cut line — the 5-minute hackathon demo
+## Historical MVP cut line — superseded for the 0.1.0 product by ADR-0008
 
 The demo shows exactly this, in order:
 
@@ -85,8 +97,8 @@ The demo shows exactly this, in order:
    instrumented" without a live-generation risk.
 2. A small pre-written Python service whose handlers are decorated with
    `@instrumented`, declaring intent (hash-only) and two deterministic checks.
-3. `docker compose up`: a stock `otel-collector` (contrib image, unmodified
-   config) receiving OTLP.
+3. `docker compose up`: a stock `otel-collector` (contrib image, stock components
+   with the supplied fan-out configuration) receiving OTLP.
 4. Healthy traffic → spans with `code_artifact.*` attributes shown landing.
 5. **Seed the drift:** flip an input flag so runtime behavior violates a
    declared check.
@@ -102,7 +114,7 @@ demo assets (service + docker-compose + drift seeder).
 **Out of MVP (post-hackathon):** live generation-side skill/hook; LLM judge
 enrichment (openai-compatible, optional, degrades gracefully); dashboard; VS
 Code extension; full token-bucket budget accounting; metrics/logs signals
-beyond spans; content-capture mode beyond the flag existing.
+beyond spans; content-capture mode (the reserved flag rejects enablement).
 
 ## Non-goals
 
@@ -121,8 +133,11 @@ protocol, no custom backend, no phone-home.
 - **Watcher precision on seeded drift:** in the demo, 100% of seeded drifts
   detected with zero findings on healthy traffic; pilot target precision
   ≥ 0.95 on a seeded-drift corpus.
-- **Overhead:** an instrumented call with checks off adds < 3% latency versus
-  a plain OTel span (microbenchmark kept in CI).
+- **Alpha SDK overhead:** with checks off, target < 3% versus a manual OTel span
+  carrying the same declarations and privacy settings. Report total cost versus
+  a bare span separately; the original < 3% bare-span ambition remains unmet.
+  See [ADR-0007](adr/0007-alpha-performance-baseline.md) for the explicit revision
+  and evidence; the microbenchmark is kept in CI.
 
 ## Verification
 

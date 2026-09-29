@@ -1,0 +1,55 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  quality:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.11", "3.14"]
+        include:
+          - os: ubuntu-latest
+            python: "3.12"
+          - os: ubuntu-latest
+            python: "3.13"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.12.17"
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - run: make ci
+      - name: Report equivalent-work and total adoption overhead
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.11'
+        run: make benchmark
+  collector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.12.17"
+          python-version: "3.11"
+      - run: make dev
+      - run: docker compose -f examples/demo/compose.yaml up -d
+      - name: Wait for collector and verify both sessions
+        run: |
+          for _ in $(seq 1 30); do
+            if curl --silent --output /dev/null http://127.0.0.1:4319/v1/traces; then break; fi
+            sleep 1
+          done
+          uv run --locked python scripts/demo_session.py --collector http://127.0.0.1:4319/v1/traces --watch-host 0.0.0.0 --watch-port 4318
+      - if: always()
+        run: docker compose -f examples/demo/compose.yaml logs
+      - if: always()
+        run: docker compose -f examples/demo/compose.yaml down
