@@ -55,6 +55,42 @@ def test_real_generation_drift_repair_and_fresh_imports(project):
     assert repaired["exit_code"] == 0 and repaired["generation"] == 3
 
 
+def test_unit_test_comparison_distinguishes_coverage_from_required_evidence(project):
+    supervisor = Supervisor(project / "melampus.toml")
+    assert supervisor.check()["exit_code"] == 0
+
+    replace(project, "return min(10000, max(0, cents))", "return cents")
+    smoke = subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", "unit_tests/test_pricing_smoke.py"],
+        cwd=project,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    complete = subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", "unit_tests"],
+        cwd=project,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert smoke.returncode == 0, smoke.stdout + smoke.stderr
+    assert complete.returncode == 1, complete.stdout + complete.stderr
+    assert supervisor.check()["exit_code"] == 1
+
+    replace(project, "return cents", "return min(10000, max(0, cents))")
+    replace(project, '@PRICE.instrument(generator="example")', "")
+    complete = subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", "unit_tests"],
+        cwd=project,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert complete.returncode == 0, complete.stdout + complete.stderr
+    assert supervisor.check()["exit_code"] == 2
+
+
 @pytest.mark.parametrize(
     "edit", ["remove", "weaken", "rename", "suppress", "raise", "syntax", "empty"]
 )

@@ -162,6 +162,12 @@ It reduces duplicate assertion code when the same contract travels with the
 function. It does not remove the need to review the oracle, exercise behavior,
 or retain valuable tests, static checks, and CI.
 
+Run `python examples/agent-session/compare_with_unit_tests.py` for a controlled
+comparison. It demonstrates both sides: contract-equivalent boundary tests catch
+the same bad return value when invoked, while removing instrumentation leaves all
+behavioral tests green but makes Melampus report incomplete evidence and deny the
+next agent action.
+
 ## What a green session cannot establish
 
 - Intent prose is descriptive; predicates define the checked claims. A constant

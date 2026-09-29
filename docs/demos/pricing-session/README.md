@@ -28,6 +28,20 @@ typical latency, or measured human-review savings.
 After the live repair, scripted controls verified that removing instrumentation and
 stopping the supervisor both produce incomplete evidence (exit 2).
 
+## Compare with unit tests
+
+The repository now includes a controlled side-by-side comparison:
+
+```sh
+uv run --locked python examples/agent-session/compare_with_unit_tests.py
+```
+
+It shows that contract-equivalent boundary tests catch the same bad return value
+when invoked. It also shows the session-specific difference: after the correct
+function loses its instrumentation, all behavioral unit tests pass while Melampus
+reports incomplete evidence and denies the next agent action. The script restores
+the source after both edits. See the walkthrough for the full comparison and caveats.
+
 ## Reproduce
 
 From the repository root, with Python 3.11+ and uv on macOS/Linux:

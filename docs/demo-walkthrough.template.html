@@ -15,7 +15,7 @@
 </style>
 </head>
 <body>
-<header><a class="brand" href="#top">melampus<span>.</span></a><nav aria-label="Walkthrough"><a href="#recording">Recording</a><a href="#repair">Repair</a><a href="#try">Try it</a><a href="#evidence">Evidence</a></nav></header>
+<header><a class="brand" href="#top">melampus<span>.</span></a><nav aria-label="Walkthrough"><a href="#recording">Recording</a><a href="#repair">Repair</a><a href="#compare">Tests</a><a href="#try">Try it</a><a href="#evidence">Evidence</a></nav></header>
 <main id="top">
 <div class="hero">
 <h1>Claude stopped.<br><em>The contract held.</em></h1>
@@ -59,14 +59,22 @@
 <p class="intro">After the live repair, the harness ran two additional controls. These were scripted checks, not actions taken by Claude.</p>
 <div class="pair"><article><span class="state">INCOMPLETE · EXIT 2</span><h3>Remove the decorator</h3><p>The function can still return bounded prices, but its required checks no longer produce evidence. Melampus reports the missing checks.</p></article><article><span class="state">INCOMPLETE · EXIT 2</span><h3>Stop the supervisor</h3><p>The gate reports that the local supervisor is unavailable. A previous healthy result does not authorize a new success claim.</p></article></div>
 </section>
+<section id="compare">
+<div class="section-head"><span class="label">05 / UNIT TESTS</span><h2>The oracle is familiar.<br>The control point is different.</h2></div>
+<p class="intro">The runnable example makes two temporary edits and executes real pytest and Melampus processes. It distinguishes a test-coverage gap from the session behavior Melampus adds.</p>
+<div class="table-wrap"><table><thead><tr><th>Temporary edit</th><th>Smoke unit</th><th>Full boundary tests</th><th>Melampus</th><th>Next agent action</th></tr></thead><tbody><tr><th>Return input unchanged</th><td class="failed">Pass</td><td>Fail</td><td>Drift</td><td>Blocked</td></tr><tr><th>Remove instrumentation</th><td>Pass</td><td>Pass</td><td>Incomplete</td><td>Blocked</td></tr></tbody></table></div>
+<div class="pair" style="margin-top:30px"><article><span class="state">SAME FOUNDATION</span><h3>Good tests catch the same bad value</h3><p>When the complete boundary suite runs, it catches the unclamped return. Melampus has no secret source of intent; both approaches depend on reviewed executable claims and representative inputs.</p></article><article><span class="state" style="color:var(--blue)">ADDED SESSION PROTOCOL</span><h3>Evidence must stay attached and current</h3><p>The supervisor reruns after watched edits, treats missing instrumentation as incomplete, and gives the synchronous agent hook a decision for the current revision.</p></article></div>
+<div class="caution"><strong>Could hooks around pytest achieve similar control?</strong>Yes. A controller that runs the right tests after every relevant edit, detects missing or stale execution, preserves repair access, and blocks the agent on failure can provide similar protection. Melampus packages that loop around contracts attached to generated units; it complements the broader regression suite.</div>
+</section>
 <section id="try">
-<div class="section-head"><span class="label">05 / TRY IT</span><h2>Run the same example yourself.</h2></div>
+<div class="section-head"><span class="label">06 / TRY IT</span><h2>Run the same example yourself.</h2></div>
 <p class="intro">Python 3.11+ and <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> on macOS or Linux. The recorder creates a disposable copy; it does not change the repository’s example.</p>
 <ol class="steps">
 <li><div><h3>Get the demo implementation</h3><p>This recording uses the first-release branch in <a href="https://github.com/melampus-org/melampus-python/pull/6">PR #6</a>. Publication on PyPI is not required.</p><pre>git clone --branch feat/first-release https://github.com/melampus-org/melampus-python.git
 cd melampus-python
 uv sync --locked --all-extras</pre></div></li>
 <li><div><h3>Try the protocol without a model request</h3><p>This version seeds and repairs the defect with a script. It exercises the real supervisor and gate, but is not an AI repair demonstration.</p><pre>uv run --locked python scripts/record_agent_demo.py --output demo-recordings/protocol</pre></div></li>
+<li><div><h3>Compare unit tests and the agent gate</h3><p>This makes two temporary edits, runs the smoke and boundary tests, queries a live Melampus session, then restores the source.</p><pre>uv run --locked python examples/agent-session/compare_with_unit_tests.py</pre></div></li>
 <li><div><h3>Record a real Claude Code repair</h3><p>Install and sign in to <a href="https://code.claude.com/docs/en/setup">Claude Code</a> first. This makes a request with your own account and configured model. Use a new output directory for each run.</p><pre>uv run --locked python scripts/record_agent_demo.py --live-claude --output demo-recordings/live</pre><p>Review <code>run.json</code>, the sanitized agent transcript, hook decisions, and source snapshots. Model behavior and timing can differ from this recording.</p></div></li>
 <li><div><h3>Keep Melampus beside your own coding session</h3><p>Open two terminals at the repository root. Review the sample’s contract, scenario, configuration and Claude hooks before enabling them.</p><div class="terminal-pair"><div><span class="label">TERMINAL A · SUPERVISOR</span><pre>source .venv/bin/activate
 cd examples/agent-session
@@ -77,12 +85,12 @@ claude</pre></div></div><p>Ask Claude to modify <code>pricing:price</code> while
 </ol>
 </section>
 <section>
-<div class="section-head"><span class="label">06 / VALUE</span><h2>Keep human review focused on intent.</h2></div>
+<div class="section-head"><span class="label">07 / VALUE</span><h2>Keep human review focused on intent.</h2></div>
 <div class="pair benefits"><article><h3>The loop handles repeated feedback</h3><ul><li>Re-executes the configured scenario when watched code changes.</li><li>Returns specific failed claims to the coding agent.</li><li>Blocks unrelated progression while allowing scoped repair.</li><li>Keeps reviewed assertions separate from implementation edits.</li></ul></article><article><h3>The team still owns the specification</h3><ul><li>Choose valuable predicates and representative scenarios.</li><li>Check coverage of the paths that matter.</li><li>Review meaningful behavior changes, including repair choices.</li><li>Keep unit tests, CI, security checks and code review.</li></ul></article></div>
 <p class="endnote">Tests with the same inputs and assertions can catch this same bug. Melampus adds the continuously running session loop, evidence freshness and agent action gating. It does not infer all business intent from prose or guarantee that generated code is correct.</p>
 </section>
 <section id="evidence">
-<div class="section-head"><span class="label">07 / EVIDENCE</span><h2>Inspect the run. Reproduce the result.</h2></div>
+<div class="section-head"><span class="label">08 / EVIDENCE</span><h2>Inspect the run. Reproduce the result.</h2></div>
 <p class="intro">These downloads are embedded in this HTML. Sharing this file shares the recording, not the author’s AI session. Readers run their own copy with their own Claude account.</p>
 <div class="downloads">{{DOWNLOADS}}</div>
 <p class="endnote">Recorded {{DATE}} with Melampus 0.1.0 and {{CLAUDE_VERSION}}. Temporary paths were replaced with <code>&lt;demo-project&gt;</code>. Published messages omit authentication metadata and hidden reasoning. Fonts and the syntax viewer use public CDNs; narrative, tables and evidence downloads remain available offline.</p>

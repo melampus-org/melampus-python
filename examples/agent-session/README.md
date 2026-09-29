@@ -1,9 +1,10 @@
 # Try the generation → drift → repair loop
 
 This is a local runnable project for Python 3.11+ on macOS/Linux. It uses SDK
-contracts and five inputs, without pytest, a collector, or a cloud account.
-Claude Code is optional for observing drift and required for the bundled agent
-hook integration.
+contracts and five inputs without a collector or cloud account. It also includes
+a pytest comparison that separates behavioral coverage from Melampus's local
+agent-session controls. Claude Code is optional for observing drift and required
+for the bundled agent hook integration.
 
 ## 1. Install from the release candidate
 
@@ -14,7 +15,7 @@ uv sync --locked --all-extras
 source .venv/bin/activate
 ```
 
-Or use `python -m pip install '.[session]'` inside your own virtual environment.
+Or use `python -m pip install '.[session]' pytest` inside your own virtual environment.
 The alpha is not yet published to PyPI; don't assume an unrelated registry
 package is this release. After publication the install becomes
 `python -m pip install 'melampus[session]==0.1.0'`.
@@ -28,6 +29,7 @@ without changing the release checkout. Keep the installed environment active.
 - `exercise.py`: negative, zero, normal, boundary, and excessive prices.
 - `melampus.toml`: source scope, protected settings/instructions, five-second deadline.
 - `CLAUDE.md` and `.claude/settings.json`: agent instructions and synchronous hooks.
+- `unit_tests/`: a typical smoke test plus contract-equivalent boundary tests.
 
 The predicates check integer/nonnegative/capped outputs. They do not prove a
 complete pricing algorithm. The contract belongs to the owner; the agent repairs
@@ -86,7 +88,40 @@ Healthy outputs `{}`; drift/incomplete outputs `decision: block` and repair
 evidence. `--claude` uses the hook's JSON protocol and normally exits 0; the
 agent-neutral `melampus gate` uses process exit codes 0/1/2.
 
-## 5. Generate a new implementation
+## 5. Compare it with unit tests
+
+Run the automated comparison from the example directory with no other supervisor
+running:
+
+```sh
+python compare_with_unit_tests.py
+```
+
+It makes two temporary edits, runs real pytest processes, queries a real Melampus
+session, prints this table, and restores `pricing.py` even if interrupted:
+
+| Temporary edit | Smoke unit test | Full boundary tests | Melampus | Next agent action |
+| --- | --- | --- | --- | --- |
+| `return cents` | Pass | Fail | Drift | Blocked |
+| Remove `@PRICE.instrument(...)` while keeping correct behavior | Pass | Pass | Incomplete | Blocked |
+
+The first row is a coverage lesson, not a Melampus advantage. A complete unit
+test suite catches the same behavioral defect when it runs. The narrow smoke test
+passes because `1200` does not exercise either boundary.
+
+The second row shows the added invariant: the reviewed contract must still be
+attached to and observed from the generated function. Ordinary behavioral tests
+do not care where their evidence came from. You could add a structural unit test
+for the decorator, but then you are rebuilding part of Melampus's required-
+evidence protocol.
+
+The remaining difference is timing and control. Pytest helps when a person, CI,
+or another hook invokes it and honors its exit status. The Melampus supervisor
+runs after watched changes, rejects stale or missing evidence, and its Claude Code
+hook blocks unrelated progression until the current source revision is healthy.
+Keep the unit tests: they remain the broader, mature regression suite.
+
+## 6. Generate a new implementation
 
 After the owner has reviewed the contract, ask the agent to rewrite `pricing.py`
 using `PRICE.instrument()` and preserve `pricing:price`. The supervisor accepts
