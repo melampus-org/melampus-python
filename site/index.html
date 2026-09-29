@@ -3,51 +3,136 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>melampus-python</title>
+    <meta name="description" content="Melampus keeps AI coding sessions aligned with reviewed intent and fresh local execution evidence." />
+    <title>Melampus 0.1.0 — keep coding agents aligned</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./brand.css" />
     <link rel="stylesheet" href="./site-hub.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="site-header__inner">
-        <div class="site-mark" aria-hidden="true"></div>
-        <span class="site-title font-head">melampus-python</span>
-        <span class="site-kicker">Documentation</span>
+        <a class="wordmark" href="#top"><span class="site-mark" aria-hidden="true"></span>melampus</a>
+        <nav aria-label="Primary navigation">
+          <a href="#how">How it works</a>
+          <a href="#compare">Unit tests</a>
+          <a href="./walkthrough/">Walkthrough</a>
+          <a href="https://github.com/melampus-org/melampus-python">GitHub</a>
+        </nav>
       </div>
     </header>
 
-    <section class="hero">
-      <div class="hero__inner">
-        <h1 class="font-head">melampus-python</h1>
-        <p class="hero__lede">
-          Static site published from <code>site/</code> via GitHub Actions.
-        </p>
-      </div>
-    </section>
+    <main id="top">
+      <section class="hero">
+        <div class="hero__inner">
+          <p class="eyebrow">OPEN-SOURCE ALPHA · v0.1.0</p>
+          <h1>Keep the coding agent<br />inside the reviewed intent.</h1>
+          <p class="hero__lede">
+            Melampus runs beside an AI coding session. When generated code drifts, it turns
+            fresh local evidence into an immediate gate: repair can continue; unrelated work waits.
+          </p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="./walkthrough/">Open the visual walkthrough</a>
+            <a class="button" href="https://github.com/melampus-org/melampus-python/releases/tag/v0.1.0">Download 0.1.0</a>
+          </div>
+          <dl class="hero__facts">
+            <div><dt>15</dt><dd>contract evaluations in the demo</dd></div>
+            <div><dt>0.84s</dt><dd>observed drift detection</dd></div>
+            <div><dt>1</dt><dd>agent edit to restore the contract</dd></div>
+          </dl>
+          <p class="disclaimer">One recorded local run; timing is illustrative, not a performance claim.</p>
+        </div>
+      </section>
 
-    <main class="guide">
-      <h2 class="font-head">Pages</h2>
-      <p>
-        Add a link here for every HTML file you drop into <code>site/</code> so
-        visitors can reach it from the index. The list below is also filled in
-        automatically at load time for any <code>*.html</code> in this folder
-        that is not linked manually — but an explicit, curated list is clearer,
-        so prefer adding links by hand.
-      </p>
-      <ul id="nav">
-        <li><a href="./index.html">Home</a></li>
-      </ul>
+      <section class="section" id="how">
+        <div class="section-head">
+          <p class="eyebrow">THE CONTROL LOOP</p>
+          <h2>Evidence reaches the agent while the code is still being written.</h2>
+          <p>Melampus owns a companion process and a synchronous gate inside the coding session.</p>
+        </div>
+        <div class="flow" aria-label="Coding agent control loop">
+          <article><span>01</span><h3>Agent edits</h3><p>The model changes watched implementation files in its normal terminal.</p></article>
+          <div class="flow__arrow" aria-hidden="true">→</div>
+          <article><span>02</span><h3>Melampus executes</h3><p>A separate local process reruns approved scenarios and records fresh evidence.</p></article>
+          <div class="flow__arrow" aria-hidden="true">→</div>
+          <article><span>03</span><h3>Gate decides</h3><p>Healthy work proceeds. Drift or missing evidence returns the session to repair.</p></article>
+        </div>
+        <div class="terminal-pair">
+          <div><span>TERMINAL A · SUPERVISOR</span><pre><code>melampus session \
+  --config examples/agent-session/melampus.yml</code></pre></div>
+          <div><span>TERMINAL B · CODING AGENT</span><pre><code>claude
+# Codex or another agent can use the same gate</code></pre></div>
+        </div>
+      </section>
+
+      <section class="section section--ink" id="videos">
+        <div class="section-head">
+          <p class="eyebrow">WATCH THE PROTOCOL</p>
+          <h2>Two short demonstrations. One honest boundary.</h2>
+          <p>See drift and repair first, then see exactly where unit tests and Melampus overlap.</p>
+        </div>
+        <div class="video-grid">
+          <article class="video-card">
+            <video controls preload="metadata" poster="./media/agent-session-demo.jpg">
+              <source src="./media/agent-session-demo.mp4" type="video/mp4" />
+              Your browser does not support MP4 video.
+            </video>
+            <div><p class="eyebrow">22 SECONDS</p><h3>Drift → block → repair</h3><p>A generated pricing change breaks reviewed bounds. The gate blocks progression until fresh execution passes.</p></div>
+          </article>
+          <article class="video-card">
+            <video controls preload="metadata" poster="./media/unit-test-comparison.jpg">
+              <source src="./media/unit-test-comparison.mp4" type="video/mp4" />
+              Your browser does not support MP4 video.
+            </video>
+            <div><p class="eyebrow">COMPARISON</p><h3>Unit tests and session evidence</h3><p>Good tests still catch behavior defects. Melampus adds change-triggered execution, evidence freshness, and an agent gate.</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="compare">
+        <div class="section-head">
+          <p class="eyebrow">WHAT CHANGES</p>
+          <h2>The oracle is familiar. The control point is different.</h2>
+          <p>Keep pytest and CI. Melampus packages them into a local protocol the coding agent cannot silently step around.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Capability</th><th>Unit tests / CI</th><th>Melampus session</th></tr></thead>
+            <tbody>
+              <tr><th>Assert expected behavior</th><td class="yes">Yes</td><td class="yes">Yes — reuses executable checks</td></tr>
+              <tr><th>Run immediately after watched edits</th><td>Only with a watcher or agent discipline</td><td class="yes">Built into the supervisor</td></tr>
+              <tr><th>Prove evidence belongs to this revision</th><td>Usually a CI commit or test invocation</td><td class="yes">Revision-bound session evidence</td></tr>
+              <tr><th>Distinguish failed from missing evidence</th><td>Requires custom orchestration</td><td class="yes">Healthy, drift, and incomplete states</td></tr>
+              <tr><th>Block the agent's next unrelated action</th><td>Usually after push or on request</td><td class="yes">Synchronous coding-agent gate</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="truth-note"><strong>A controller around pytest can provide similar protection.</strong> Melampus is useful when you want that controller, evidence model, and agent gate as one reviewed protocol.</aside>
+      </section>
+
+      <section class="section section--cta" id="try">
+        <div>
+          <p class="eyebrow">TRY THE ALPHA</p>
+          <h2>Run the recorded example on your machine.</h2>
+          <p>The package is available as a verified wheel on the v0.1.0 GitHub release. Production PyPI publishing is still being configured.</p>
+        </div>
+        <pre><code>git clone https://github.com/melampus-org/melampus-python.git
+cd melampus-python
+uv sync --all-extras
+uv run python examples/agent-session/compare_with_unit_tests.py</code></pre>
+        <div class="hero__actions">
+          <a class="button button--primary" href="./walkthrough/#try">Step-by-step setup</a>
+          <a class="button" href="https://github.com/melampus-org/melampus-python/tree/main/examples/agent-session">Browse the example</a>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        Built and deployed automatically · edit <code>site/index.html</code> to update
+        <span>Melampus 0.1.0 · Apache-2.0</span>
+        <span><a href="https://github.com/melampus-org/melampus-python">Source</a> · <a href="https://github.com/melampus-org/melampus-python/issues">Issues</a></span>
       </div>
     </footer>
   </body>
