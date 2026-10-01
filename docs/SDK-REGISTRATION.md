@@ -1,8 +1,8 @@
 # Choose the integration style that fits your code
 
-The 0.2.0 development branch adds `instrument` for existing service instances
+Version 0.2.0 adds `instrument` for existing service instances
 and module boundaries. The 0.1.0 artifact supports the existing function
-decorators. No PyPI publication is implied by these docs.
+decorators. PyPI publication is separate from GitHub releases.
 
 | Your code | Start with | Main tradeoff |
 | --- | --- | --- |

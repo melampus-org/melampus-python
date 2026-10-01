@@ -6,7 +6,7 @@ and makes fresh SDK evidence available to synchronous agent hooks. Service
 monitoring and broader tracing workflows are later expansion; the OTLP watcher
 remains a reusable foundation.
 
-## Registration alternative (0.2.0 development)
+## Registration alternative (0.2.0)
 
 For existing services, register reviewed contracts at application setup with
 `instrument(service, namespace=..., contracts=...)`, keeping business methods

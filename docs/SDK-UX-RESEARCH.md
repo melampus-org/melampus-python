@@ -1,5 +1,10 @@
 # Python SDK onboarding: evidence and design decisions
 
+The project owner accepted ADR-0009 on 2026-10-02 for version 0.2.0: native
+decorators for a few functions, explicit registration for existing services.
+This accepts the design recommendation; human comfort and preference remain
+unmeasured until participant feedback is collected.
+
 Research date: 2026-10-01. This comparison uses official documentation and the
 TypeScript [0.2.0 alpha release](https://github.com/melampus-org/melampus-typescript/releases/tag/v0.2.0),
 commit `2af85ad82db624e0c32cdfe54116f57f3789d7db`. It evaluates interaction

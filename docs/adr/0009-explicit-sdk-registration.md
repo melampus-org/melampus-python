@@ -1,6 +1,6 @@
 # ADR-0009: Explicit registration with native decorator compatibility
 
-Status: accepted for the 0.2.0 development branch (2026-10-01).
+Status: accepted for 0.2.0 (2026-10-02), confirmed by the project owner.
 
 ## Context
 

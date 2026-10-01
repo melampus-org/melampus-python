@@ -4,7 +4,8 @@ Keep an AI coding session aligned with reviewed intent. Give the agent a small
 set of SDK contracts, run a local supervisor beside it, and feed execution
 failures back into repair before the agent continues building.
 
-**0.2.0 alpha is in development; no PyPI release is claimed here.** The SDK and
+**0.2.0 alpha. GitHub releases include validated wheels and sdists; PyPI
+publication is separate.** The SDK and
 wire schema are experimental. The supervisor needs no SaaS, LLM judge, tracing
 backend, collector, or unit-test framework. Python 3.11+, macOS/Linux.
 
