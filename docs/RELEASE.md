@@ -1,6 +1,21 @@
-# First release: 0.1.0 alpha
+# Releases and publishing
 
-## Scope and evidence
+## 0.2.0 alpha: registration and onboarding
+
+Version 0.2.0 mirrors TypeScript 0.2.0's explicit class/module
+registration and measured pilot, adapted to Python method binding and native
+decorators. ADR-0009 records the accepted integration recommendation.
+The wire schema remains 0.1.0 independently of the SDK version.
+
+Run `make ci`, `make demo`, `make demo-registration` and `make demo-pilot`.
+The distribution check installs the built wheel in a separate environment and
+executes the original session plus registration and synthetic pilot demos.
+CI verifies the same behavior across its Python/macOS/Linux matrix. Research
+and API boundaries are in [SDK-UX-RESEARCH.md](SDK-UX-RESEARCH.md) and
+[SDK-REGISTRATION.md](SDK-REGISTRATION.md). Human comfort/preference remains
+unmeasured; synthetic output verifies collection rather than adoption benefits.
+
+## 0.1.0 alpha: original scope and evidence
 
 The primary product is a local AI coding-session supervisor: reviewed SDK
 contracts, fresh execution after edits, required-check evidence, and synchronous
@@ -75,7 +90,8 @@ events do not automatically trigger another workflow with the default token.
 
 ## One-time registry setup (project owner)
 
-Configure a pending trusted publisher in **each** registry you intend to use:
+For the first PyPI upload, configure a pending trusted publisher on the owner's
+[PyPI account publishing page](https://pypi.org/manage/account/publishing/):
 
 | Field | Value |
 | --- | --- |
@@ -83,27 +99,37 @@ Configure a pending trusted publisher in **each** registry you intend to use:
 | Owner | `melampus-org` |
 | Repository | `melampus-python` |
 | Workflow filename | `publish.yml` |
-| Environment | `testpypi` on TestPyPI; `pypi` on PyPI |
+| Environment | `pypi` |
 
-No long-lived PyPI token is required. Restrict the GitHub `pypi` environment to
-main and maintainers who may publish. See [PyPI's publisher setup](https://docs.pypi.org/trusted-publishers/adding-a-publisher/)
+No long-lived PyPI token is required. The GitHub `pypi` environment is configured
+to allow deployments from `main` only. See [PyPI's publisher setup](https://docs.pypi.org/trusted-publishers/adding-a-publisher/)
 and [pending publishers](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/).
 These settings must exist before the first registry upload; the workflow cannot
-create ownership on your behalf.
+create the pending publisher on your behalf. A pending publisher creates the
+project on first upload and does not reserve the name in advance.
+
+As checked on 2026-10-02, TestPyPI's `melampus` project belongs to the unrelated
+`orfi2017/quantimage-melampus` project. Do not dispatch our `testpypi` upload under
+that name unless ownership is legitimately resolved. The two registries have
+independent ownership; TestPyPI's name collision does not establish PyPI ownership.
+Rehearsing under another name requires separately reviewed distribution metadata.
+The GitHub wheel's clean-environment install/repair checks remain available
+without a registry upload.
 
 ## Publish
 
 1. Resolve review blockers, merge the version PR, and inspect the validated GitHub artifacts.
-2. Dispatch **Publish Python package** from `main`, with the existing tag and
-   `registry=testpypi`. It validates tag ancestry/version, rebuilds and tests, and
-   uploads from a separate job with only OIDC permission.
-3. Install the TestPyPI artifact with its `session` extra into a fresh environment
-   and rerun the local agent-session demo and enabled Claude hook walkthrough.
-   Download the exact project/version from TestPyPI without dependencies, then
-   install that wheel with dependencies from the normal PyPI index; avoid combining
-   indexes for general dependency resolution.
-4. Dispatch the same workflow with `registry=pypi`, then verify install, CLI and
-   import from the real index. Update README's preparation notice after publication.
+2. Complete the PyPI pending publisher setup above. Dispatch **Publish Python
+   package** from `main`, with the existing tag and `registry=pypi`. It validates
+   tag ancestry/version, rebuilds and tests, and uploads from a separate job with
+   only OIDC permission. A missing publisher fails authentication and cannot
+   be repaired by creating GitHub tags or API tokens.
+3. Verify the exact version's wheel/sdist on PyPI, install the `session` extra
+   into a fresh environment, check CLI/import, and rerun the local session demos.
+4. TestPyPI remains an optional rehearsal after its name/ownership is resolved.
+   Download only the exact project's wheel without dependencies from TestPyPI,
+   then install it with dependencies from normal PyPI; do not combine indexes
+   for general dependency resolution.
 
 Uploads are immutable. Fix a bad published package with a new patch release;
 never attempt to overwrite an existing distribution filename.

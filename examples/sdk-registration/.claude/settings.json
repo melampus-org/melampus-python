@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "PreToolUse": [{"hooks": [{"type": "command", "command": "melampus gate --claude --state \"$CLAUDE_PROJECT_DIR/.melampus/session.json\"", "timeout": 30}]}],
+    "PostToolUse": [{"hooks": [{"type": "command", "command": "melampus gate --claude --state \"$CLAUDE_PROJECT_DIR/.melampus/session.json\"", "timeout": 30}]}],
+    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": "melampus gate --claude --state \"$CLAUDE_PROJECT_DIR/.melampus/session.json\"", "timeout": 30}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "melampus gate --claude --state \"$CLAUDE_PROJECT_DIR/.melampus/session.json\"", "timeout": 30}]}]
+  }
+}

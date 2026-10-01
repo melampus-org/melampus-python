@@ -6,6 +6,14 @@ and makes fresh SDK evidence available to synchronous agent hooks. Service
 monitoring and broader tracing workflows are later expansion; the OTLP watcher
 remains a reusable foundation.
 
+## Registration alternative (0.2.0)
+
+For existing services, register reviewed contracts at application setup with
+`instrument(service, namespace=..., contracts=...)`, keeping business methods
+plain. [SDK registration](SDK-REGISTRATION.md) explains binding, scope and
+compatibility; the [runnable comparison](../examples/sdk-registration/README.md)
+includes Claude hooks. The original decorator session remains supported.
+
 ## What you review, and what the agent writes
 
 1. **Approve intent once.** Put a small set of `Contract` objects in a Python
