@@ -1,5 +1,20 @@
 # First release: 0.1.0 alpha
 
+## Next alpha: registration and onboarding
+
+The 0.2.0 development branch mirrors TypeScript 0.2.0's explicit class/module
+registration and measured pilot, adapted to Python method binding and native
+decorators. The package version remains 0.1.0 until a reviewed release bump.
+The wire schema remains 0.1.0 independently of the SDK version.
+
+Run `make ci`, `make demo`, `make demo-registration` and `make demo-pilot`.
+The distribution check installs the built wheel in a separate environment and
+executes the original session plus registration and synthetic pilot demos.
+CI verifies the same behavior across its Python/macOS/Linux matrix. Research
+and API boundaries are in [SDK-UX-RESEARCH.md](SDK-UX-RESEARCH.md) and
+[SDK-REGISTRATION.md](SDK-REGISTRATION.md). Human comfort/preference remains
+unmeasured; synthetic output verifies collection rather than adoption benefits.
+
 ## Scope and evidence
 
 The primary product is a local AI coding-session supervisor: reviewed SDK

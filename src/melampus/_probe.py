@@ -54,8 +54,7 @@ def evaluate(config: dict[str, Any]) -> dict[str, Any]:
         if contract is None:
             return
         if (
-            path in declarations
-            or intent != contract.intent
+            intent != contract.intent
             or assumptions != contract.assumptions
             or len(checks) != len(contract.checks)
             or any(a is not b for a, b in zip(checks, contract.checks, strict=True))

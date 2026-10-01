@@ -57,6 +57,8 @@ ENV/
 .cursor/settings.local.json
 .mcp.local.json
 .melampus/
+pilot-results/
+pilot-results/*.lock
 
 # macOS
 .DS_Store

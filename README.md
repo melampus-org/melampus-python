@@ -4,7 +4,7 @@ Keep an AI coding session aligned with reviewed intent. Give the agent a small
 set of SDK contracts, run a local supervisor beside it, and feed execution
 failures back into repair before the agent continues building.
 
-**0.1.0 alpha is in preparation; no PyPI release is claimed yet.** The SDK and
+**0.2.0 alpha is in development; no PyPI release is claimed here.** The SDK and
 wire schema are experimental. The supervisor needs no SaaS, LLM judge, tracing
 backend, collector, or unit-test framework. Python 3.11+, macOS/Linux.
 
@@ -57,7 +57,7 @@ It cannot infer arbitrary intent from prose, inspect unfinished model tokens,
 prove unexecuted behavior, or guarantee the absence of all AI-generated slop.
 Review the claims and scenarios before asking the agent to implement them.
 
-## SDK contracts travel with the code
+## Register reviewed contracts at the application boundary
 
 Keep the reviewed definition in `intent.py`:
 
@@ -71,21 +71,58 @@ PRICE = Contract(
 CONTRACTS = {"pricing:price": PRICE}
 ```
 
-The agent writes `pricing.py`:
+Keep business functions plain in `pricing.py`:
 
 ```python
-from intent import PRICE
-
-
-@PRICE.instrument(generator="claude-code")
 def price(cents: int) -> int:
     return max(0, cents)
 ```
+
+Register once in `registration.py`, then call through that object:
+
+```python
+from types import SimpleNamespace
+from melampus import instrument
+from intent import PRICE
+from pricing import price
+
+pricing = instrument(
+    SimpleNamespace(price=price),
+    namespace="pricing",
+    contracts={"price": PRICE},
+    generator="claude-code",
+)
+pricing.price(-100)
+```
+
+For an existing service use
+`instrument(PricingService(), namespace="pricing:PricingService", contracts={"price": PRICE})`
+and review `pricing:PricingService.price` in `CONTRACTS`. Registration returns
+the same typed object, preserves bound state and sync/async behavior, and never
+changes the shared class. Register each instance before sharing it. Original
+imports and captured references bypass registration; omitted methods are unconfigured.
+
+For a few functions, the existing `@PRICE.instrument()` and `@instrumented(...)`
+decorators remain supported. The original agent example/recording demonstrates
+that approach; [the registration example](examples/sdk-registration/README.md)
+shows all three styles beside an agent.
 
 The session runner owns local OTel setup automatically. It verifies that the
 function used the reviewed check objects and that every required check actually
 ran. No network export is needed for this local path. The plain `@instrumented`
 API remains available for applications that own their tracing configuration.
+Multiple instances can share reviewed paths; conflicts remain incomplete and
+a passing call cannot erase drift. The wire schema remains at **0.1.0**.
+
+```sh
+make demo-registration  # compare decorator, class and module-boundary repair
+make demo-pilot         # synthetic measurement walkthrough, no human claims
+make pilot ARGS='--participant p01 --rotation 0'  # local, resumable participant study
+```
+
+[API boundaries](docs/SDK-REGISTRATION.md) ·
+[Official-source SDK/decorator research](docs/SDK-UX-RESEARCH.md) ·
+[Pilot tasks and reports](examples/pilot_study/README.md).
 
 ## Optional OTLP foundation demo
 

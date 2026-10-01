@@ -148,6 +148,7 @@ def instrumented(
     policy: Policy | None = None,
     tracer: Tracer | None = None,
     capture_content: bool = False,
+    path: str | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Declare intent and evaluate checks on sync or async function return values.
 
@@ -156,6 +157,14 @@ def instrumented(
     """
     if capture_content:
         raise NotImplementedError("content capture is not supported in schema 0.1.0")
+    if path is not None and (
+        not isinstance(path, str)
+        or not 1 <= len(path) <= 256
+        or not path.isprintable()
+        or path.count(":") != 1
+        or any(not part for part in path.split(":"))
+    ):
+        raise ValueError("path must be module:qualified_name, at most 256 printable characters")
     if not isinstance(intent, str) or not intent:
         raise ValueError("intent must be nonempty text")
     if not IDENTIFIER.fullmatch(generator):
@@ -183,16 +192,18 @@ def instrumented(
     def decorate(function: Callable[P, R]) -> Callable[P, R]:
         if inspect.isgeneratorfunction(function) or inspect.isasyncgenfunction(function):
             raise TypeError("generator functions are not supported")
-        path = f"{function.__module__}:{function.__qualname__}"
+        selected_path = (
+            path if path is not None else f"{function.__module__}:{function.__qualname__}"
+        )
         if _declaration_validator is not None:
-            _declaration_validator(path, intent, frozen_checks, tuple(assumptions))
-        if len(path) > 256 or not path.isprintable():
+            _declaration_validator(selected_path, intent, frozen_checks, tuple(assumptions))
+        if len(selected_path) > 256 or not selected_path.isprintable():
             raise ValueError("function path must contain at most 256 printable characters")
-        attributes = {**declaration, sc.FUNCTION: path}
+        attributes = {**declaration, sc.FUNCTION: selected_path}
 
         def start() -> Any:
             return selected_tracer.start_as_current_span(
-                path,
+                selected_path,
                 attributes=attributes,
                 record_exception=False,
                 set_status_on_exception=False,
@@ -209,9 +220,10 @@ def instrumented(
                         span.set_status(Status(StatusCode.ERROR))
                         raise
                     if frozen_checks and span.is_recording():
-                        _evaluate(span, frozen_checks, result, path, selected_policy)
+                        _evaluate(span, frozen_checks, result, selected_path, selected_policy)
                     return result
 
+            async_wrapper.__dict__["_melampus_wrapped"] = True
             return cast(Callable[P, R], async_wrapper)
 
         @wraps(function)
@@ -223,9 +235,10 @@ def instrumented(
                     span.set_status(Status(StatusCode.ERROR))
                     raise
                 if frozen_checks and span.is_recording():
-                    _evaluate(span, frozen_checks, result, path, selected_policy)
+                    _evaluate(span, frozen_checks, result, selected_path, selected_policy)
                 return result
 
+        wrapper.__dict__["_melampus_wrapped"] = True
         return wrapper
 
     return decorate

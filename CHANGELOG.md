@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Explicit `instrument(target, namespace=..., contracts=...)` registration for
+  ordinary Python class instances, modules and grouped function boundaries.
+  Selected methods preserve binding, signatures, sync/async behavior and target
+  typing; shared classes are untouched and unsupported descriptors fail explicitly.
+- Optional stable `path=` on existing function decorators; the inferred path
+  and experimental 0.1.0 wire schema remain compatible.
+- Three-style registration/repair demo, Claude session example, official-source
+  SDK/decorator research and documented scope/bypass tradeoffs.
+- Local timed, resumable pilot covering all seven worksheet measures, six task
+  order rotations and Markdown/CSV/JSON reports. Synthetic runs are labeled;
+  human preference and comfort remain unmeasured.
+
+### Changed
+
+- Permit matching declarations from multiple instances sharing reviewed paths;
+  conflicts remain incomplete and passing calls do not erase drift.
+- Recommend explicit registration for existing services while retaining native
+  decorators as an equal supported choice for small function integrations.
+
 ## [0.1.0] - 2026-09-28
 
 ### Added

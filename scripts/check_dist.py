@@ -29,6 +29,7 @@ def main() -> None:
             "melampus/watcher.py",
             "melampus/session.py",
             "melampus/contracts.py",
+            "melampus/registration.py",
             "melampus/_probe.py",
         ):
             assert required in names, required
@@ -50,6 +51,13 @@ def main() -> None:
             "examples/agent-session/exercise.py",
             "docs/AGENT-SESSION.md",
             "scripts/demo_agent_session.py",
+            "examples/sdk-registration/.claude/settings.json",
+            "examples/sdk-registration/registration.py",
+            "examples/pilot_study/study.py",
+            "docs/SDK-REGISTRATION.md",
+            "docs/SDK-UX-RESEARCH.md",
+            "scripts/demo_registration.py",
+            "scripts/demo_pilot.py",
         ):
             assert any(name.endswith("/" + suffix) for name in names), suffix
     with tempfile.TemporaryDirectory(prefix="melampus-dist-") as temporary:
@@ -83,7 +91,7 @@ def main() -> None:
                 str(wheel),
                 "python",
                 "-c",
-                "import melampus; from melampus import Check, Policy, instrumented; print(melampus.__version__)",
+                "import melampus; from melampus import Check, Contract, Policy, instrument, instrumented; print(melampus.__version__)",
             ],
             cwd=temp,
             env=env,
@@ -95,6 +103,25 @@ def main() -> None:
             env=env,
             check=True,
         )
+        for script, arguments in (
+            ("demo_registration.py", []),
+            ("demo_pilot.py", ["--demo"]),
+        ):
+            subprocess.run(
+                [
+                    "uv",
+                    "run",
+                    "--no-project",
+                    "--with",
+                    f"melampus[session] @ {wheel.as_uri()}",
+                    "python",
+                    str(ROOT / "scripts" / script),
+                    *arguments,
+                ],
+                cwd=temp,
+                env=env,
+                check=True,
+            )
         subprocess.run(
             [
                 "uv",

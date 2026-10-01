@@ -25,11 +25,12 @@ class Contract:
     assumptions: tuple[str, ...] = ()
 
     def instrument(
-        self, *, generator: str = "unspecified"
+        self, *, generator: str = "unspecified", path: str | None = None
     ) -> Callable[[Callable[P, R]], Callable[P, R]]:
         return instrumented(
             intent=self.intent,
             checks=self.checks,
             assumptions=self.assumptions,
             generator=generator,
+            path=path,
         )

@@ -419,7 +419,9 @@ def test_contract_and_execution_failures_are_incomplete(project, mutation):
         replace(project, "return min(10000, max(0, cents))", "import os; os._exit(0)")
     else:
         with (project / "pricing.py").open("a") as f:
-            f.write("\n@PRICE.instrument()\ndef price(cents):\n    return 0\n")
+            f.write(
+                '\nfrom melampus import instrumented\n@instrumented(intent="Changed intent", checks=PRICE.checks)\ndef price(cents):\n    return 0\n'
+            )
     report = Supervisor(project / "melampus.toml").check()
     assert report["exit_code"] == 2, report
 

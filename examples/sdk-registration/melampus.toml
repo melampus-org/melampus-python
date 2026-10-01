@@ -1,0 +1,5 @@
+contracts = "intent"
+probe = "exercise.py"
+watch = ["service.py", "functions.py", "wrapper.py", "registration.py"]
+protect = [".claude/settings.json", "CLAUDE.md"]
+timeout = 5
